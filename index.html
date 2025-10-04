@@ -3,15 +3,28 @@ layout: default
 title: Home
 ---
 
-<h1>Welcome to My Personal Website</h1>
-<p>This is the homepage of my personal website where I share my research, projects, and thoughts.</p>
+<div class="home-intro">
+    <h1>Welcome to My Personal Website</h1>
+    <p>I'm a researcher and developer passionate about exploring new ideas and sharing knowledge. This is where I document my journey, projects, and thoughts.</p>
+</div>
 
-<h2>Recent Blog Posts</h2>
-<ul>
-    {% for post in site.posts %}
-        <li>
-            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-            <span>{{ post.date | date: "%B %d, %Y" }}</span>
-        </li>
-    {% endfor %}
-</ul>
+<section>
+    <h2>Recent Blog Posts</h2>
+    {% if site.posts.size > 0 %}
+        <ul class="post-list">
+            {% for post in site.posts limit:5 %}
+                <li>
+                    <a href="{{ post.url | relative_url }}" class="post-link">{{ post.title }}</a>
+                    <div class="post-date">{{ post.date | date: "%B %d, %Y" }}</div>
+                    {% if post.excerpt %}
+                        <div class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 25 }}</div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        
+        <p><a href="{{ '/blog.html' | relative_url }}">View all posts →</a></p>
+    {% else %}
+        <p>No posts yet. Check back soon!</p>
+    {% endif %}
+</section>
