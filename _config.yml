@@ -1,3 +1,4 @@
+
 // filepath: /Users/jameslin/Documents/GitHub/shixuanLin1009.github.io/_config.yml
 # Site settings
 title: "Shixuan Lin - Personal Website"
@@ -17,10 +18,11 @@ author:
   bio: "PhD Student | Researcher | Developer"
 
 # Build settings
-theme: minima
+remote_theme: "mmistakes/minimal-mistakes@4.27.3"
 plugins:
   - jekyll-feed
   - jekyll-remote-theme
+  - jekyll-include-cache
 
 # Exclude from processing.
 # The following items will not be processed, by default.
