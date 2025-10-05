@@ -17,7 +17,7 @@ author:
   bio: "PhD Student | Researcher | Developer"
 
 # Build settings
-theme: minimal
+theme: minima
 plugins:
   - jekyll-feed
   - jekyll-remote-theme
