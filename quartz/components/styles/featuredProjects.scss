@@ -1,0 +1,124 @@
+.featured-projects {
+  margin-bottom: 2.5rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.section-more {
+  font-size: 0.85rem;
+  color: var(--gray);
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    color: var(--dark);
+  }
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.project-card {
+  border: 1px solid var(--lightgray);
+  border-radius: 10px;
+  padding: 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    border-color: var(--gray);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.project-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  svg:first-child {
+    color: var(--gray);
+    flex-shrink: 0;
+  }
+}
+
+.project-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.project-links {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+
+  a {
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--dark);
+    }
+  }
+}
+
+.project-desc {
+  font-size: 0.85rem;
+  color: var(--darkgray);
+  margin: 0;
+  line-height: 1.55;
+  flex: 1;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+}
+
+.project-tag {
+  font-size: 0.72rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 4px;
+  background-color: var(--lightgray);
+  color: var(--darkgray);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}

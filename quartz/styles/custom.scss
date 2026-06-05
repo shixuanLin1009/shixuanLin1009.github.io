@@ -1,3 +1,21 @@
 @use "./base.scss";
 
-// put your custom CSS here!
+// CV download button (used in about.md)
+.cv-download-btn {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.45rem 1.2rem;
+  border: 1.5px solid var(--darkgray);
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--dark) !important;
+  text-decoration: none !important;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: var(--dark);
+    color: var(--light) !important;
+    border-color: var(--dark);
+  }
+}

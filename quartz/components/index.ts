@@ -24,6 +24,8 @@ import Comments from "./Comments"
 import Flex from "./Flex"
 import ConditionalRender from "./ConditionalRender"
 import Hero from "./Hero"
+import StatsBar from "./StatsBar"
+import FeaturedProjects from "./FeaturedProjects"
 
 export {
   ArticleTitle,
@@ -52,4 +54,6 @@ export {
   Flex,
   ConditionalRender,
   Hero,
+  StatsBar,
+  FeaturedProjects,
 }
