@@ -1,6 +1,9 @@
 ---
-title: Welcome to Quartz
+title: James Lin
 ---
 
-This is a blank Quartz installation.
-See the [documentation](https://quartz.jzhao.xyz) for how to get started.
+## Recent Posts
+
+<!-- 最新文章會顯示在這裡 -->
+
+- [[posts/hello-world|Hello World — 第一篇文章]]
