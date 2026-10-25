@@ -47,7 +47,8 @@ npm run dev
 
 在其他電腦用 Obsidian 寫的筆記，會由 obsidian-git 推上 GitHub 的私人 vault repo。workflow `Sync from Obsidian` 會在 GitHub 上讀取 vault，執行和 Studio 相同的同步；有變更時，會自動 commit 並重新部署網站。
 
-- **立刻發佈**：GitHub 網頁或手機 App → 這個 repo → Actions →「Sync from Obsidian」→ Run workflow。
+- **在 Obsidian 裡一鍵發佈（任何電腦）**：`Ctrl+P` →「Obsidian Git: Commit-and-sync」。vault repo 的 `.github/workflows/publish-to-website.yml` 收到推送後，只要有「已發佈或曾經發佈」的筆記被修改，就會立刻觸發網站同步。obsidian-git 的自動推送也會觸發。這個功能需要在 **vault repo** 設定 secret `WEBSITE_TOKEN`：fine-grained token，只授權這個網站 repo，權限 **Actions: Read and write**。
+- **立刻發佈（不開 Obsidian）**：GitHub 網頁或手機 App → 這個 repo → Actions →「Sync from Obsidian」→ Run workflow。
 - **自動發佈**：每小時整點過 17 分自動檢查一次，沒有變更就不會部署。
 - **下架**：把筆記刪除或改成 `publish: false`，下一次雲端同步就會把文章從網站移除。如果 vault 讀取失敗（例如是空的），同步會直接停止，不會誤刪文章。
 - **改檔名或搬資料夾**：文章會沿用原本的網址。
