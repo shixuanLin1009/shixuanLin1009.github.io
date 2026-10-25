@@ -53,7 +53,7 @@ const path = Astro.url.pathname;
       <a
         href={switchLocalePath(Astro.url, other)}
         class="lang-switch rounded-md px-2 py-1.5 font-mono text-xs text-muted transition hover:text-fg"
-        aria-label={t(locale, 'lang.switchLabel')}
+        aria-label={`${t(locale, 'lang.switch')} — ${t(locale, 'lang.switchLabel')}`}
         data-lang={other}
         hreflang={other === 'en' ? 'en' : 'zh-Hant-TW'}
       >

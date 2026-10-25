@@ -90,6 +90,9 @@ export async function getPosts() {
 }
 export type Post = Awaited<ReturnType<typeof getPosts>>[number];
 
+/** Posts that appear in lists, tags and RSS (unlisted previews are excluded). */
+export const getListedPosts = async () => (await getPosts()).filter((p) => !p.data.unlisted);
+
 /** CJK text is counted per character (~400/min), latin per word (~220/min). */
 export function readingMinutes(body = ''): number {
   const text = body.replace(/```[\s\S]*?```/g, '').replace(/<[^>]+>/g, '');

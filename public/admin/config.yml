@@ -6,6 +6,9 @@ backend:
   name: github
   repo: shixuanLin1009/shixuanLin1009.github.io
   branch: main
+  # "Sign in with GitHub" needs an OAuth server (Netlify or a Cloudflare Worker), which
+  # this GitHub Pages site doesn't have — so only token sign-in is offered.
+  auth_methods: [token]
   commit_messages:
     create: 'content: create {{collection}} "{{slug}}"'
     update: 'content: update {{collection}} "{{slug}}"'
@@ -434,6 +437,7 @@ collections:
       - { name: tags, label: 標籤 Tags, widget: list, required: false, hint: 以逗號分隔 }
       - { name: cover, label: 封面 Cover, widget: image, required: false }
       - { name: draft, label: 草稿 Draft, widget: boolean, default: false, required: false }
+      - { name: unlisted, label: 不公開預覽 Unlisted, widget: boolean, default: false, required: false, hint: 文章會上線、可用網址打開，但不出現在列表、搜尋、RSS；確認沒問題後取消勾選即正式公開。 }
       - name: obsidian
         label: Obsidian 來源（自動）
         widget: object

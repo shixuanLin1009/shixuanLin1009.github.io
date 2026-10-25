@@ -259,6 +259,8 @@ export const blogSchema = z.preprocess(
     tags: strings,
     cover: z.string().optional(),
     draft: z.boolean().default(false),
+    /** Live at its URL but left out of lists, tags, RSS, search and the sitemap — for previewing. */
+    unlisted: z.boolean().default(false),
     obsidian: z.object({ source: z.string(), hash: z.string() }).optional(),
   }),
 );

@@ -15,7 +15,7 @@ const year = new Date().getFullYear();
 <footer class="mt-24 border-t border-line">
   <div class="container-page flex flex-col gap-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
     <div class="space-y-1">
-      <p>© {year} {profile.name}{settings.footer && <span class="text-muted/80"> · {settings.footer}</span>}</p>
+      <p>© {year} {profile.name}{settings.footer && <span> · {settings.footer}</span>}</p>
       <p class="font-mono text-xs">{t(locale, 'footer.built')}</p>
     </div>
     <div class="flex items-center gap-1">

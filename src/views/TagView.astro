@@ -2,7 +2,7 @@
 import PostList from '../components/PostList.astro';
 import Base from '../layouts/Base.astro';
 import { tagSlug } from '../lib/blog';
-import { getPosts } from '../lib/content';
+import { getListedPosts } from '../lib/content';
 import { localePath, t, type Locale } from '../lib/i18n';
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
   tag: string;
 }
 const { locale, tag } = Astro.props;
-const posts = (await getPosts()).filter((p) => p.data.tags.some((x) => tagSlug(x) === tag));
+const posts = (await getListedPosts()).filter((p) => p.data.tags.some((x) => tagSlug(x) === tag));
 const label = posts[0]?.data.tags.find((x) => tagSlug(x) === tag) ?? tag;
 ---
 

@@ -6,8 +6,10 @@ name: Sync from Obsidian
 # whose note was deleted or unpublished are removed. If anything changed, the
 # posts are committed here and the site is redeployed.
 #
-# Run it any time: Actions → "Sync from Obsidian" → Run workflow
-# (also works from the GitHub mobile app). It also runs once an hour.
+# Normally started by the vault's "Publish to website" workflow whenever a
+# published note is pushed (obsidian-git "Commit-and-sync"). It can also be
+# run by hand (Actions → "Sync from Obsidian" → Run workflow) and runs once a
+# day as a safety net, e.g. for attachment-only changes.
 #
 # Setup (once): add a repository secret VAULT_TOKEN — a fine-grained token
 # with read-only "Contents" access to the vault repo. Without it this
@@ -15,7 +17,7 @@ name: Sync from Obsidian
 on:
   workflow_dispatch:
   schedule:
-    - cron: '17 * * * *'
+    - cron: '17 19 * * *' # 03:17 Taiwan time
 
 permissions:
   contents: write # commit synced posts

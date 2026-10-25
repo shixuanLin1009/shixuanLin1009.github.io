@@ -4,7 +4,9 @@
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 @theme {
-  --font-sans: 'Inter Variable', 'Noto Sans TC Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    'Inter Variable', 'PingFang TC', 'Hiragino Sans TC', 'Noto Sans TC', 'Noto Sans CJK TC', 'Microsoft JhengHei',
+    ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 

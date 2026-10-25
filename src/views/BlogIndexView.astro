@@ -3,14 +3,14 @@ import Icon from '../components/Icon.astro';
 import PostList from '../components/PostList.astro';
 import Base from '../layouts/Base.astro';
 import { blogCategories, categoryLabel, tagCounts, tagSlug } from '../lib/blog';
-import { getPosts } from '../lib/content';
+import { getListedPosts } from '../lib/content';
 import { localePath, t, type Locale } from '../lib/i18n';
 
 interface Props {
   locale: Locale;
 }
 const { locale } = Astro.props;
-const posts = await getPosts();
+const posts = await getListedPosts();
 const categories = blogCategories(posts);
 const tags = tagCounts(posts);
 ---

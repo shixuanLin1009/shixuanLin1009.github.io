@@ -1,9 +1,9 @@
 import rss from '@astrojs/rss';
 import type { APIRoute } from 'astro';
-import { getPosts, getProfile } from '../lib/content';
+import { getListedPosts, getProfile } from '../lib/content';
 
 export const GET: APIRoute = async ({ site }) => {
-  const [posts, profile] = await Promise.all([getPosts(), getProfile('en')]);
+  const [posts, profile] = await Promise.all([getListedPosts(), getProfile('en')]);
   return rss({
     title: `${profile.name} — Blog`,
     description: 'Reading notes, paper notes and ideas.',

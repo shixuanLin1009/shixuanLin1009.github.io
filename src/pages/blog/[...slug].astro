@@ -9,10 +9,15 @@ import { formatDay, isoDay, localePath, t, type Locale } from '../../lib/i18n';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
-  return posts.map((post, i) => ({
-    params: { slug: post.id },
-    props: { post, newer: posts[i - 1], older: posts[i + 1] },
-  }));
+  // Previous/next links only walk through listed posts; unlisted previews get none.
+  const listed = posts.filter((p) => !p.data.unlisted);
+  return posts.map((post) => {
+    const i = listed.indexOf(post);
+    return {
+      params: { slug: post.id },
+      props: { post, newer: i > 0 ? listed[i - 1] : undefined, older: i >= 0 ? listed[i + 1] : undefined },
+    };
+  });
 }
 
 const { post, newer, older } = Astro.props;
@@ -30,12 +35,20 @@ const cover = resolveCover(post);
   image={typeof cover === 'string' ? cover : cover?.src}
   type="article"
   alternates={false}
+  noindex={post.data.unlisted}
 >
   <div class="container-page py-12 sm:py-16 lg:grid lg:max-w-6xl lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-12">
     <article class="mx-auto w-full max-w-3xl">
       <a href={localePath('/blog/', locale)} class="mb-8 inline-block font-mono text-xs text-muted transition hover:text-accent" data-pagefind-ignore>
         ← {t(locale, 'blog.title')}
       </a>
+      {
+        post.data.unlisted && (
+          <p class="mb-6 rounded-lg border border-dashed border-accent/50 bg-accent-soft px-4 py-3 text-sm text-fg" role="note">
+            {t(locale, 'blog.unlisted')}
+          </p>
+        )
+      }
       <header class="mb-10">
         <div class="mb-3 flex flex-wrap items-center gap-2 font-mono text-xs text-muted" data-pagefind-ignore>
           <a href={`${localePath('/blog/', locale)}?c=${post.data.category}`} class="text-accent">{categoryLabel(post.data.category, locale)}</a>

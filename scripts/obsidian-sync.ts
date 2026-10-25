@@ -376,6 +376,7 @@ async function planNote(
     tags: asList(fm.tags),
     ...(cover ? { cover } : {}),
     ...(isTrue(fm.draft) ? { draft: true } : {}),
+    ...(isTrue(fm.unlisted) ? { unlisted: true } : {}),
   };
   for (const k of Object.keys(frontmatter)) if (frontmatter[k] === undefined) delete frontmatter[k];
 

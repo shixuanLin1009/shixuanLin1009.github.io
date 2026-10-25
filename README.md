@@ -3,14 +3,21 @@
 林世璿（Shixuan Lin）的個人網站。用 Astro 7 建置，部署到 GitHub Pages。網站支援中英雙語（英文在 `/`，中文在 `/zh/`），內容從後台或 Obsidian 編輯，履歷 PDF 會跟著網站內容自動產生。
 
 ```
-Obsidian (publish: true) ──▶ 本機 Studio /__studio ──┐
-本機後台 /admin（Local Repository）─────────────────┼─▶ git push ─┐
-手機／其他電腦 線上後台 /admin（GitHub token）── 直接 commit ───────────┤
-                                                                       ▼
-          GitHub Actions：astro build → Typst 履歷 PDF（中／英）→ Pagefind 搜尋索引 → Pages
+任何電腦的 Obsidian ─ Commit-and-sync ─▶ 私人 vault repo ─(觸發)─▶ Sync from Obsidian ─┐
+線上後台 /admin（GitHub token，任何電腦／手機）── 直接 commit ───────────────────────────┤
+這台電腦：本機後台 /admin ＋ Studio /__studio ── 發佈（git push）────────────────────────┤
+                                                                                       ▼
+            GitHub Actions：astro build → Typst 履歷 PDF（中／英）→ Pagefind 搜尋索引 → Pages
 ```
 
-## 日常使用
+## 日常使用：一個原則
+
+| 要更新的內容 | 怎麼做 |
+| --- | --- |
+| **部落格**（任何電腦、手機） | 在 Obsidian 寫，`publish: true` → `Ctrl+P`「Obsidian Git: Commit-and-sync」→ 約 2 分鐘後上線 |
+| **履歷、作品、論文、個人資料、設定** | 用後台（CMS）：在這台電腦用本機後台改完到 Studio 發佈；在其他地方用線上後台，存檔就上線 |
+
+Studio 的 Obsidian 同步只是備用（例如想在發佈前先在本機預覽）；平常寫部落格不需要開它。
 
 ### 1. 在這台電腦上
 
@@ -30,7 +37,10 @@ npm run dev
 
 1. 在 Obsidian 新增筆記，插入範本 **Blog Post**（`5 - Templates/Blog Post.md`）。
 2. 寫完後把 `publish` 改成 `true`，並設定 `category`：`reading` 是讀書心得，`paper` 是論文心得，`ideas` 是個人發想。
-3. 打開 Studio，按「同步」，預覽沒問題後按「發佈」。
+3. `Ctrl+P` →「Obsidian Git: Commit-and-sync」。約 2 分鐘後上線（詳見下方「雲端發佈」）。
+
+- **想先預覽再公開**：frontmatter 加上 `unlisted: true`。文章會上線、可以用網址打開（頁面上方有提示），但不會出現在列表、首頁、標籤、搜尋、RSS 和 sitemap。看過沒問題後刪掉這行，再 Commit-and-sync 一次就正式公開。
+- **下架**：`publish: false` 或刪除筆記，再 Commit-and-sync。
 
 支援的語法：
 
@@ -41,7 +51,7 @@ npm run dev
 
 筆記之間的 `[[連結]]` 如果對方也有發佈，就會變成網站連結；否則顯示成純文字。同步只會修改網站，**不會修改你的筆記**。
 
-只用命令列也可以：`npm run sync`（加上 `-- --dry-run` 只預覽不寫入），然後 `npm run publish`。
+備用方式（在這台電腦）：Studio 按「同步」→ 在 `localhost:4321` 預覽 →「發佈」。命令列則是 `npm run sync`（加上 `-- --dry-run` 只預覽不寫入），然後 `npm run publish`。
 
 #### 雲端發佈（不用這台電腦）
 
@@ -49,10 +59,10 @@ npm run dev
 
 - **在 Obsidian 裡一鍵發佈（任何電腦）**：`Ctrl+P` →「Obsidian Git: Commit-and-sync」。vault repo 的 `.github/workflows/publish-to-website.yml` 收到推送後，只要有「已發佈或曾經發佈」的筆記被修改，就會立刻觸發網站同步。obsidian-git 的自動推送也會觸發。這個功能需要在 **vault repo** 設定 secret `WEBSITE_TOKEN`：fine-grained token，只授權這個網站 repo，權限 **Actions: Read and write**。
 - **立刻發佈（不開 Obsidian）**：GitHub 網頁或手機 App → 這個 repo → Actions →「Sync from Obsidian」→ Run workflow。
-- **自動發佈**：每小時整點過 17 分自動檢查一次，沒有變更就不會部署。
+- **保險機制**：每天台灣時間 03:17 自動檢查一次（補抓只換圖片、沒改文字的情況），沒有變更就不會部署。
 - **下架**：把筆記刪除或改成 `publish: false`，下一次雲端同步就會把文章從網站移除。如果 vault 讀取失敗（例如是空的），同步會直接停止，不會誤刪文章。
 - **改檔名或搬資料夾**：文章會沿用原本的網址。
-- 寫完後要等 obsidian-git 推送（每 10 分鐘一次），或在 Obsidian 執行「Git: Commit-and-sync」立刻推送。
+- 沒按 Commit-and-sync 也沒關係：obsidian-git 每 10 分鐘的自動推送一樣會觸發發佈。
 
 **一次性設定**：建立 `VAULT_TOKEN`。
 
@@ -68,6 +78,8 @@ npm run dev
    - 只授權 `shixuanLin1009.github.io` 這個 repo。
    - 權限：Contents 設為 Read and write。
 2. 打開 https://shixuanlin1009.github.io/admin/ ，選「使用存取權杖登入」，貼上 token。
+
+後台只提供 token 登入：「使用 GitHub 登入」需要 OAuth 伺服器（Netlify 或 Cloudflare Worker），GitHub Pages 沒有，所以已經關掉。token 只存在你的瀏覽器裡。換電腦或清除瀏覽器資料後，要重新貼一次。
 
 存檔會直接 commit 到 GitHub，網站和 PDF 會自動重建。下次在本機開 Studio 時，會自動拉取這些線上修改。
 

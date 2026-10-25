@@ -7,8 +7,8 @@ import ShowcaseCard from '../components/ShowcaseCard.astro';
 import Base from '../layouts/Base.astro';
 import {
   getCategories,
+  getListedPosts,
   getNews,
-  getPosts,
   getProfile,
   getPublications,
   getShowcase,
@@ -30,7 +30,7 @@ const [profile, socials, categories, showcase, news, publications, posts] = awai
   getShowcase(locale),
   getNews(locale),
   getPublications(),
-  getPosts(),
+  getListedPosts(),
 ]);
 
 const featured = showcase.filter((i) => i.featured);

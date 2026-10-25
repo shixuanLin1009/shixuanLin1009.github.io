@@ -1,8 +1,11 @@
 ---
 import '@fontsource-variable/inter';
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import '@fontsource-variable/jetbrains-mono';
-import '@fontsource-variable/noto-sans-tc';
+import monoLatin from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 import '../styles/global.css';
+// Chinese text uses the system font (PingFang / Microsoft JhengHei / Noto Sans CJK):
+// a CJK webfont would add 1–2 MB per page.
 import Analytics from '../components/Analytics.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
@@ -53,6 +56,8 @@ const other: Locale = locale === 'en' ? 'zh-TW' : 'en';
       )
     }
     {noindex && <meta name="robots" content="noindex" />}
+    <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={monoLatin} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title={`${profile.name} — Blog`} href="/rss.xml" />
     <meta name="theme-color" content="#fafbfd" media="(prefers-color-scheme: light)" />
