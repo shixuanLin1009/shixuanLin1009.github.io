@@ -9,7 +9,7 @@ en:
     - Google Cloud
     - MySQL
     - Firebase
-    - Issaclab
+    - NVIDIA Isaac Lab
   order: 3
 zh-TW:
   group: 工具與平台

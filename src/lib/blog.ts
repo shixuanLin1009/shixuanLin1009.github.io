@@ -2,7 +2,7 @@ import type { ImageMetadata } from 'astro';
 import type { Post } from './content';
 import { t, type Locale, type UiKeyOf } from './i18n';
 
-const known = ['reading', 'paper', 'ideas'] as const;
+const known = ['reading', 'paper', 'ideas', 'daily'] as const;
 
 export function categoryLabel(category: string, locale: Locale): string {
   return (known as readonly string[]).includes(category)

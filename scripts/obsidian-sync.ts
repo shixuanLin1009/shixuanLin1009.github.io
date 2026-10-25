@@ -42,6 +42,8 @@ const CATEGORY_ALIASES: Record<string, string> = {
   論文: 'paper',
   個人發想: 'ideas',
   發想: 'ideas',
+  日常: 'daily',
+  日記: 'daily',
 };
 
 export type StudioConfig = { vaultPath: string; exclude: string[] };

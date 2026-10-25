@@ -434,6 +434,7 @@ collections:
           - { label: 讀書心得 Reading notes, value: reading }
           - { label: 論文心得 Paper notes, value: paper }
           - { label: 個人發想 Ideas, value: ideas }
+          - { label: 日常 Daily, value: daily }
       - { name: tags, label: 標籤 Tags, widget: list, required: false, hint: 以逗號分隔 }
       - { name: cover, label: 封面 Cover, widget: image, required: false }
       - { name: draft, label: 草稿 Draft, widget: boolean, default: false, required: false }
