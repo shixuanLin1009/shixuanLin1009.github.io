@@ -1,0 +1,232 @@
+---
+import Icon from '../components/Icon.astro';
+import NeuralCanvas from '../components/NeuralCanvas.astro';
+import PubItem from '../components/PubItem.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ShowcaseCard from '../components/ShowcaseCard.astro';
+import Base from '../layouts/Base.astro';
+import {
+  getCategories,
+  getNews,
+  getPosts,
+  getProfile,
+  getPublications,
+  getShowcase,
+  getSocials,
+  readingMinutes,
+} from '../lib/content';
+import { formatDay, formatMonth, isoDay, localePath, t, type Locale } from '../lib/i18n';
+import { blockMd, inlineMd, protectedHref } from '../lib/markdown';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+
+const [profile, socials, categories, showcase, news, publications, posts] = await Promise.all([
+  getProfile(locale),
+  getSocials(),
+  getCategories(locale),
+  getShowcase(locale),
+  getNews(locale),
+  getPublications(),
+  getPosts(),
+]);
+
+const featured = showcase.filter((i) => i.featured);
+const sections = categories
+  .filter((c) => c.showOnHome)
+  .map((c) => ({ category: c, items: showcase.filter((i) => i.category === c.id && !i.featured) }))
+  .filter((s) => s.items.length > 0);
+const categoryById = new Map(categories.map((c) => [c.id, c]));
+const selectedPubs = publications.filter((p) => p.selected);
+const heroSocials = socials.filter((s) => s.showInHero);
+const latestPosts = posts.slice(0, 3);
+let n = 0;
+const nextIndex = () => String(++n).padStart(2, '0');
+---
+
+<Base locale={locale}>
+  <!-- Hero -->
+  <section class="grid-bg relative overflow-hidden border-b border-line">
+    <NeuralCanvas class="opacity-60 [mask-image:linear-gradient(to_right,transparent,black_45%)] md:opacity-100" />
+    <div class="container-page relative grid items-center gap-10 py-16 sm:py-24 md:grid-cols-[1fr_auto]">
+      <div class="max-w-2xl">
+        <p class="eyebrow mb-4 flex items-center gap-2">
+          <span class="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-accent-2"></span>
+          {profile.affiliation}
+        </p>
+        <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
+          {profile.name}
+        </h1>
+        <p class="mt-3 text-xl font-medium sm:text-2xl"><span class="gradient-text">{profile.headline}</span></p>
+        {profile.tagline && <p class="mt-3 font-mono text-sm text-muted">{profile.tagline}</p>}
+        <div class="mt-6 max-w-xl space-y-3 leading-relaxed text-muted [&_strong]:font-semibold [&_strong]:text-fg" set:html={blockMd(profile.bio)} />
+        <div class="mt-8 flex flex-wrap items-center gap-2">
+          <a href={localePath('/resume/', locale)} class="btn-primary">
+            <Icon name="file" size={15} />
+            {t(locale, 'home.viewResume')}
+          </a>
+          {
+            heroSocials.map((s) => (
+              <a
+                {...protectedHref(s.url)}
+                class="btn"
+                aria-label={s.label}
+                {...(s.url.startsWith('http') ? { target: '_blank', rel: 'noopener me' } : {})}
+              >
+                <Icon name={s.platform} size={15} />
+                <span class="hidden sm:inline">{s.label}</span>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+      {
+        profile.avatar && (
+          <div class="relative mx-auto hidden md:block">
+            <div class="absolute -inset-1.5 rounded-full bg-gradient-to-br from-accent to-accent-2 opacity-70 blur-md" />
+            <img
+              src={profile.avatar}
+              alt={profile.name}
+              width="208"
+              height="208"
+              class="relative h-52 w-52 rounded-full border-4 border-surface object-cover"
+            />
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <div class="container-page space-y-20 py-16">
+    <!-- About + interests + news -->
+    <section class="grid gap-10 md:grid-cols-[1.4fr_1fr]">
+      <div>
+        <SectionHeading index={`${nextIndex()} / about`} title={t(locale, 'nav.about')} />
+        {profile.about && <div class="space-y-4 leading-relaxed text-muted" set:html={blockMd(profile.about)} />}
+        {
+          profile.interests.length > 0 && (
+            <div class="mt-6">
+              <p class="mb-2 text-sm font-medium">{t(locale, 'home.interests')}</p>
+              <div class="flex flex-wrap gap-2">
+                {profile.interests.map((i) => (
+                  <span class="rounded-full border border-line bg-surface px-3 py-1 text-sm">{i}</span>
+                ))}
+              </div>
+            </div>
+          )
+        }
+      </div>
+      {
+        news.length > 0 && (
+          <div>
+            <SectionHeading index={`${nextIndex()} / news`} title={t(locale, 'home.news')} />
+            <ol class="relative space-y-5 border-l border-line pl-5">
+              {news.slice(0, 6).map((item) => (
+                <li class="relative">
+                  <span class="absolute top-1.5 -left-[25px] h-2.5 w-2.5 rounded-full border-2 border-bg bg-accent" />
+                  <time datetime={isoDay(item.date)} class="font-mono text-xs text-muted">
+                    {formatMonth(item.date, locale)}
+                  </time>
+                  <p class="mt-0.5 text-sm leading-relaxed [&_strong]:font-semibold">
+                    <Fragment set:html={inlineMd(item.text)} />
+                    {item.link && (
+                      <a href={item.link} class="ml-1 inline-flex align-middle text-accent" target="_blank" rel="noopener" aria-label="Link">
+                        <Icon name="arrow-up-right" size={13} />
+                      </a>
+                    )}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )
+      }
+    </section>
+
+    {
+      featured.length > 0 && (
+        <section>
+          <SectionHeading index={`${nextIndex()} / featured`} title={t(locale, 'home.featured')} />
+          <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {featured.map((item) => {
+              const cat = categoryById.get(item.category);
+              return <ShowcaseCard item={item} locale={locale} size="lg" categoryLabel={cat?.title} icon={cat?.icon} />;
+            })}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      sections.map(({ category, items }) => (
+        <section id={category.id}>
+          <SectionHeading index={`${nextIndex()} / ${category.id}`} title={category.title} description={category.description} />
+          {category.layout === 'list' ? (
+            <ul class="divide-y divide-line rounded-xl border border-line bg-surface">
+              {items.map((item) => (
+                <li>
+                  <a href={localePath(`/work/${item.id}/`, locale)} class="group flex items-center gap-4 px-4 py-3.5 transition hover:bg-accent-soft">
+                    <Icon name={category.icon ?? 'badge'} size={18} class="shrink-0 text-accent" />
+                    <div class="min-w-0 flex-1">
+                      <p class="font-medium leading-snug transition group-hover:text-accent">{item.title}</p>
+                      {item.org && <p class="text-sm text-muted">{item.org}</p>}
+                    </div>
+                    <span class="shrink-0 font-mono text-xs text-muted">{formatMonth(item.date, locale)}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((item) => (
+                <ShowcaseCard item={item} locale={locale} categoryLabel={category.title} icon={category.icon} />
+              ))}
+            </div>
+          )}
+        </section>
+      ))
+    }
+
+    {
+      selectedPubs.length > 0 && (
+        <section>
+          <SectionHeading index={`${nextIndex()} / publications`} title={t(locale, 'home.selectedPubs')}>
+            <a href={localePath('/publications/', locale)} class="link text-sm">
+              {t(locale, 'home.allPubs')} →
+            </a>
+          </SectionHeading>
+          <div class="space-y-8">
+            {selectedPubs.map((pub) => (
+              <PubItem pub={pub} locale={locale} showAbstract={false} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      latestPosts.length > 0 && (
+        <section>
+          <SectionHeading index={`${nextIndex()} / blog`} title={t(locale, 'home.latestPosts')}>
+            <a href={localePath('/blog/', locale)} class="link text-sm">
+              {t(locale, 'nav.blog')} →
+            </a>
+          </SectionHeading>
+          <div class="grid gap-4 sm:grid-cols-3">
+            {latestPosts.map((post) => (
+              <a href={`/blog/${post.id}/`} class="card card-hover flex flex-col gap-2 p-4" lang={post.data.lang === 'en' ? 'en' : 'zh-Hant-TW'}>
+                <p class="font-mono text-[11px] text-muted">
+                  {formatDay(post.data.date, locale)} · {t(locale, 'blog.minRead', { n: readingMinutes(post.body) })}
+                </p>
+                <h3 class="font-semibold leading-snug">{post.data.title}</h3>
+                {post.data.description && <p class="line-clamp-2 text-sm text-muted">{post.data.description}</p>}
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</Base>

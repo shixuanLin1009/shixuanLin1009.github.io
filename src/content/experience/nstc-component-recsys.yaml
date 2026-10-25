@@ -1,0 +1,21 @@
+en:
+  org: Engineering Component Recommendation System — NSTC Project
+  role: Software Engineer
+  type: work
+  location: Tainan, Taiwan
+  start: 2024-12-01
+  end: 2025-10-31
+  bullets:
+    - Developed a recommendation system for engineering components under the NSTC project led by Prof. Chin-Feng Lai, focusing on high-frequency and low-frequency magnetic component training.
+    - Designed and implemented a vector/linear routing algorithm and Python data-processing scripts that suggest optimal components from multiple engineering parameters, improving selection efficiency for researchers and engineers.
+    - Collaborated with a multidisciplinary team to integrate the system into the training platform, ensuring usability for educational and research purposes.
+  tags: [Recommender Systems, Python]
+  order: 3
+zh-TW:
+  org: 國科會計畫 工程元件推薦系統
+  role: 軟體工程師
+  location: 台灣 台南
+  bullets:
+    - 參與賴槿峰教授主持的國科會計畫，開發高頻與低頻磁性元件訓練用的工程元件推薦系統。
+    - 設計並實作向量／線性路由演算法與 Python 資料處理腳本，依多項工程參數推薦最適元件，提升研究人員與工程師的選型效率。
+    - 與跨領域團隊合作，將系統整合進訓練平台，兼顧教學與研究使用情境。

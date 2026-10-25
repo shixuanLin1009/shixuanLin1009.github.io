@@ -1,0 +1,12 @@
+en:
+  title: Certificates
+  description: Certifications and training programs.
+  resumeTitle: Certificates
+  icon: badge
+  order: 4
+  layout: list
+  showOnHome: true
+zh-TW:
+  title: 證照與培訓
+  description: 證照與專業培訓計畫。
+  resumeTitle: 證照

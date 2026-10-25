@@ -1,0 +1,105 @@
+---
+import * as lucide from 'lucide-static';
+import {
+  siBilibili,
+  siGithub,
+  siGooglescholar,
+  siHuggingface,
+  siFacebook,
+  siInstagram,
+  siKaggle,
+  siMedium,
+  siOrcid,
+  siResearchgate,
+  siThreads,
+  siX,
+  siYoutube,
+} from 'simple-icons';
+
+interface Props {
+  name: string;
+  size?: number;
+  class?: string;
+  label?: string;
+}
+const { name, size = 18, class: className = '', label } = Astro.props;
+
+const brands: Record<string, { path: string }> = {
+  github: siGithub,
+  scholar: siGooglescholar,
+  instagram: siInstagram,
+  facebook: siFacebook,
+  x: siX,
+  twitter: siX,
+  youtube: siYoutube,
+  orcid: siOrcid,
+  researchgate: siResearchgate,
+  threads: siThreads,
+  medium: siMedium,
+  huggingface: siHuggingface,
+  kaggle: siKaggle,
+  bilibili: siBilibili,
+};
+
+const lucideNames: Record<string, keyof typeof lucide> = {
+  email: 'Mail',
+  mail: 'Mail',
+  gmail: 'Mail',
+  sun: 'Sun',
+  moon: 'Moon',
+  search: 'Search',
+  'arrow-right': 'ArrowRight',
+  'arrow-up-right': 'ArrowUpRight',
+  download: 'Download',
+  flask: 'FlaskConical',
+  code: 'Code',
+  trophy: 'Trophy',
+  badge: 'BadgeCheck',
+  file: 'FileText',
+  pdf: 'FileText',
+  calendar: 'Calendar',
+  'map-pin': 'MapPin',
+  copy: 'Copy',
+  rss: 'Rss',
+  menu: 'Menu',
+  close: 'X',
+  globe: 'Globe',
+  website: 'Globe',
+  link: 'Link',
+  other: 'Link',
+  languages: 'Languages',
+  book: 'BookOpen',
+  lightbulb: 'Lightbulb',
+  newspaper: 'Newspaper',
+  graduation: 'GraduationCap',
+  briefcase: 'Briefcase',
+  'chevron-left': 'ChevronLeft',
+  'chevron-right': 'ChevronRight',
+  tag: 'Tag',
+  clock: 'Clock',
+  play: 'Play',
+  video: 'Video',
+  quote: 'Quote',
+  award: 'Award',
+  users: 'Users',
+  cpu: 'Cpu',
+  sparkles: 'Sparkles',
+};
+
+const a11y = label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"';
+let svg: string;
+const brand = brands[name];
+if (brand) {
+  svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${size}" height="${size}" fill="currentColor" class="${className}" ${a11y}><path d="${brand.path}"/></svg>`;
+} else if (name === 'linkedin') {
+  svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${size}" height="${size}" fill="currentColor" class="${className}" ${a11y}><path d="M20.45 2H3.55C2.7 2 2 2.7 2 3.55v16.9C2 21.3 2.7 22 3.55 22h16.9c.85 0 1.55-.7 1.55-1.55V3.55C22 2.7 21.3 2 20.45 2ZM8.1 18.5H5.4V9.75h2.7v8.75ZM6.75 8.55a1.57 1.57 0 1 1 0-3.13 1.57 1.57 0 0 1 0 3.13ZM18.6 18.5h-2.7v-4.25c0-1.02-.02-2.33-1.42-2.33-1.42 0-1.64 1.11-1.64 2.26v4.32h-2.7V9.75h2.59v1.2h.04c.36-.68 1.24-1.4 2.56-1.4 2.74 0 3.25 1.8 3.25 4.15v4.8Z"/></svg>`;
+} else {
+  const raw = (lucide[lucideNames[name] ?? 'Link'] as string) ?? (lucide.Link as string);
+  svg = raw
+    .replace(/\swidth="\d+"/, ` width="${size}"`)
+    .replace(/\sheight="\d+"/, ` height="${size}"`)
+    .replace(/\sclass="[^"]*"/, ` class="${className}" ${a11y}`);
+}
+---
+
+<Fragment set:html={svg} />

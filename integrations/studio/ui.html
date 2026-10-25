@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Studio · 本機控制台</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        --bg: #f6f8fb;
+        --surface: #fff;
+        --fg: #0f172a;
+        --muted: #5b6478;
+        --line: #e3e7ef;
+        --accent: #155e75;
+        --soft: rgb(21 94 117 / 0.08);
+        --ok: #059669;
+        --warn: #b45309;
+        --bad: #dc2626;
+        color-scheme: light;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #090c13;
+          --surface: #10141f;
+          --fg: #e5e8f0;
+          --muted: #8d95aa;
+          --line: #1e2433;
+          --accent: #67c6dc;
+          --soft: rgb(103 198 220 / 0.1);
+          --ok: #34d399;
+          --warn: #fbbf24;
+          --bad: #f87171;
+          color-scheme: dark;
+        }
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.55 Inter, 'Noto Sans TC', system-ui, sans-serif; }
+      header { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); background: color-mix(in oklab, var(--bg) 85%, transparent); backdrop-filter: blur(8px); }
+      header h1 { margin: 0; font-size: 16px; }
+      header nav { margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px; }
+      main { max-width: 1040px; margin: 0 auto; padding: 20px; display: grid; gap: 16px; }
+      section { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
+      h2 { margin: 0 0 4px; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+      h2 .n { font: 600 11px ui-monospace, monospace; color: var(--accent); }
+      .hint { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
+      .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+      button, .btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); padding: 6px 12px; border-radius: 8px; font: inherit; font-size: 13px; cursor: pointer; text-decoration: none; }
+      button:hover, .btn:hover { border-color: var(--accent); color: var(--accent); }
+      button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+      @media (prefers-color-scheme: dark) { button.primary { color: #06121a; } }
+      button:disabled { opacity: 0.5; cursor: progress; }
+      .stat { font: 12px ui-monospace, monospace; color: var(--muted); }
+      .stat b { color: var(--fg); }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      th { text-align: left; font-weight: 500; color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--line); padding: 6px 8px; }
+      td { border-bottom: 1px solid var(--line); padding: 8px; vertical-align: top; }
+      tr:last-child td { border-bottom: 0; }
+      .badge { display: inline-block; padding: 1px 8px; border-radius: 999px; font: 600 11px ui-monospace, monospace; border: 1px solid currentColor; white-space: nowrap; }
+      .new { color: var(--accent); } .changed { color: var(--warn); } .synced { color: var(--ok); } .conflict, .error, .removed { color: var(--bad); }
+      .warn { color: var(--warn); font-size: 12px; margin-top: 4px; }
+      .mono { font-family: ui-monospace, monospace; font-size: 12px; }
+      pre { margin: 12px 0 0; padding: 12px; max-height: 260px; overflow: auto; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; font: 12px/1.5 ui-monospace, monospace; white-space: pre-wrap; }
+      pre:empty { display: none; }
+      input[type='text'] { flex: 1; min-width: 240px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); font: inherit; }
+      iframe { width: 100%; height: 640px; border: 1px solid var(--line); border-radius: 10px; background: #fff; margin-top: 12px; }
+      .files { max-height: 200px; overflow: auto; margin: 10px 0; padding: 0; list-style: none; }
+      .files li { font: 12px ui-monospace, monospace; padding: 2px 0; }
+      .files .s { display: inline-block; width: 2.2em; color: var(--accent); }
+      .empty { color: var(--muted); padding: 10px 0; }
+      a { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🛠 Studio · 本機控制台</h1>
+      <nav>
+        <a class="btn" href="/" target="_blank">網站預覽</a>
+        <a class="btn" href="/zh/" target="_blank">中文版</a>
+        <a class="btn" href="/admin/index.html" target="_blank">內容後台 CMS</a>
+        <a class="btn" id="actions-link" href="#" target="_blank">GitHub Actions</a>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        <h2><span class="n">01</span> 狀態</h2>
+        <p class="hint">開啟時會自動拉取線上（手機／CMS）的修改，避免和本機衝突。</p>
+        <div class="row">
+          <span class="stat" id="status-line">讀取中…</span>
+          <span style="flex: 1"></span>
+          <button id="refresh">重新整理</button>
+          <button id="pull">拉取線上修改</button>
+        </div>
+        <pre id="status-log"></pre>
+      </section>
+
+      <section>
+        <h2><span class="n">02</span> Obsidian 同步</h2>
+        <p class="hint">
+          列出 vault 中 frontmatter 有 <code>publish: true</code> 的筆記。同步只會改網站，不會修改你的筆記。
+          <span class="mono" id="vault-path"></span>
+        </p>
+        <div class="row">
+          <button id="scan">重新掃描</button>
+          <button id="sync-selected">同步勾選的</button>
+          <button class="primary" id="sync-all">同步全部新增／修改</button>
+          <label class="row" style="gap: 4px"><input type="checkbox" id="force" /> 覆蓋網站端的修改</label>
+        </div>
+        <div id="notes" style="margin-top: 12px"></div>
+        <pre id="sync-log"></pre>
+      </section>
+
+      <section>
+        <h2><span class="n">03</span> 履歷 PDF</h2>
+        <p class="hint">用網站目前的內容重新產生中英兩份 PDF（上線時 GitHub Actions 也會自動產生）。私人版會加上 <code>.env.local</code> 裡的 <code>PHONE</code>，只存在本機。</p>
+        <div class="row">
+          <button class="primary" id="resume">重新產生 PDF</button>
+          <label class="row" style="gap: 4px"><input type="checkbox" id="private" /> 同時產生含電話的私人版</label>
+          <span style="flex: 1"></span>
+          <button data-pdf="/cv/Shixuan_Lin_Resume_EN.pdf">預覽 EN</button>
+          <button data-pdf="/cv/Shixuan_Lin_Resume_ZH.pdf">預覽 中文</button>
+          <span id="private-links" class="row"></span>
+        </div>
+        <pre id="resume-log"></pre>
+        <iframe id="pdf" title="Resume preview" hidden></iframe>
+      </section>
+
+      <section>
+        <h2><span class="n">04</span> 發佈</h2>
+        <p class="hint">commit 所有變更 → 合併線上修改 → push。約 1–2 分鐘後網站與 PDF 會更新。</p>
+        <ul class="files" id="files"></ul>
+        <div class="row">
+          <input type="text" id="message" placeholder="commit 訊息" />
+          <button class="primary" id="publish">發佈到網站</button>
+        </div>
+        <pre id="publish-log"></pre>
+      </section>
+    </main>
+
+    <script type="module">
+      const $ = (id) => document.getElementById(id);
+      const api = async (path, body) => {
+        const res = await fetch(`/__studio/api/${path}`, {
+          method: body === undefined ? 'GET' : 'POST',
+          headers: { 'x-studio': '1', 'content-type': 'application/json' },
+          body: body === undefined ? undefined : JSON.stringify(body),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok && !data.log) throw new Error(data.error || res.statusText);
+        return data;
+      };
+      const busy = async (button, fn) => {
+        button.disabled = true;
+        try {
+          await fn();
+        } catch (err) {
+          alert(err.message);
+        } finally {
+          button.disabled = false;
+        }
+      };
+      const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+      const today = () => new Date().toISOString().slice(0, 10);
+      const labels = { new: '新增', changed: '已修改', synced: '已同步', conflict: '網站端有修改', error: '錯誤' };
+
+      async function loadStatus(fetchRemote = true) {
+        const s = await api(`status?fetch=${fetchRemote ? 1 : 0}`);
+        $('actions-link').href = s.actionsUrl ?? '#';
+        $('status-line').innerHTML =
+          `branch <b>${esc(s.branch)}</b> · 本機變更 <b>${s.files.length}</b> 個檔案 · 待推送 <b>${s.ahead}</b> · 線上新的 <b>${s.behind}</b>` +
+          (s.remoteOk ? '' : ' · <span style="color:var(--bad)">無法連線 GitHub</span>');
+        $('files').innerHTML = s.files.length
+          ? s.files.map((f) => `<li><span class="s">${esc(f.status)}</span>${esc(f.path)}</li>`).join('')
+          : '<li class="empty">沒有未發佈的變更</li>';
+        return s;
+      }
+
+      let notes = [];
+      async function loadNotes() {
+        $('notes').innerHTML = '<p class="empty">掃描中…</p>';
+        const r = await api('obsidian');
+        notes = r.notes;
+        $('vault-path').textContent = `Vault：${r.vault}`;
+        const rows = r.notes
+          .map(
+            (n, i) => `<tr>
+              <td><input type="checkbox" data-i="${i}" ${n.status === 'new' || n.status === 'changed' ? 'checked' : ''} ${n.status === 'error' ? 'disabled' : ''}></td>
+              <td><b>${esc(n.title)}</b><div class="mono" style="color:var(--muted)">${esc(n.source)}</div>${n.warnings.map((w) => `<div class="warn">⚠ ${esc(w)}</div>`).join('')}</td>
+              <td><span class="badge ${n.status}">${labels[n.status]}</span></td>
+              <td class="mono">${esc(n.category)}<br>${esc(n.date)}</td>
+              <td class="mono"><a href="/blog/${esc(n.slug)}/" target="_blank">/blog/${esc(n.slug)}/</a></td>
+            </tr>`,
+          )
+          .join('');
+        const removed = r.removed
+          .map(
+            (p) => `<tr>
+              <td></td>
+              <td><b>${esc(p.title)}</b><div class="mono" style="color:var(--muted)">${esc(p.source)}（筆記已刪除或取消 publish）</div></td>
+              <td><span class="badge removed">已下架</span></td>
+              <td></td>
+              <td><button data-remove="${esc(p.slug)}">從網站刪除</button></td>
+            </tr>`,
+          )
+          .join('');
+        $('notes').innerHTML =
+          rows || removed
+            ? `<table><thead><tr><th></th><th>筆記</th><th>狀態</th><th>分類／日期</th><th>網址</th></tr></thead><tbody>${rows}${removed}</tbody></table>`
+            : '<p class="empty">還沒有 publish: true 的筆記。用 Obsidian 範本「Blog Post」開始寫吧。</p>';
+        for (const b of document.querySelectorAll('[data-remove]')) {
+          b.addEventListener('click', () =>
+            busy(b, async () => {
+              if (!confirm(`從網站刪除 /blog/${b.dataset.remove}/？（Obsidian 筆記不受影響）`)) return;
+              await api('obsidian/remove', { slug: b.dataset.remove });
+              await Promise.all([loadNotes(), loadStatus(false)]);
+            }),
+          );
+        }
+      }
+
+      async function sync(sources) {
+        const r = await api('obsidian/sync', { sources, force: $('force').checked });
+        $('sync-log').textContent =
+          `同步了 ${r.written.length} 篇：${r.written.join(', ') || '—'}` + r.skipped.map((s) => `\n略過 ${s.source}：${s.reason}`).join('');
+        await Promise.all([loadNotes(), loadStatus(false)]);
+      }
+
+      $('refresh').onclick = (e) => busy(e.currentTarget, () => loadStatus());
+      $('pull').onclick = (e) =>
+        busy(e.currentTarget, async () => {
+          const r = await api('pull', {});
+          $('status-log').textContent = r.log.join('\n') || '已是最新';
+          await Promise.all([loadStatus(false), loadNotes()]);
+        });
+      $('scan').onclick = (e) => busy(e.currentTarget, loadNotes);
+      $('sync-all').onclick = (e) => busy(e.currentTarget, () => sync(undefined));
+      $('sync-selected').onclick = (e) =>
+        busy(e.currentTarget, () => sync([...document.querySelectorAll('#notes input[data-i]:checked')].map((c) => notes[c.dataset.i].source)));
+
+      const showPdf = (src) => {
+        $('pdf').hidden = false;
+        $('pdf').src = `${src}?t=${Date.now()}`;
+      };
+      for (const b of document.querySelectorAll('[data-pdf]')) b.onclick = () => showPdf(b.dataset.pdf);
+      $('resume').onclick = (e) =>
+        busy(e.currentTarget, async () => {
+          $('resume-log').textContent = '產生中…';
+          const r = await api('resume', { private: $('private').checked });
+          $('resume-log').textContent = r.log.join('\n');
+          $('private-links').innerHTML = r.files
+            .filter((f) => f.startsWith('resume/private/'))
+            .map((f) => `<a class="btn" target="_blank" href="/__studio/private/${f.split('/').pop()}">私人版 ${f.includes('_ZH') ? '中文' : 'EN'}</a>`)
+            .join('');
+          showPdf('/cv/Shixuan_Lin_Resume_EN.pdf');
+        });
+
+      $('message').value = `content: update site (${today()})`;
+      $('publish').onclick = (e) =>
+        busy(e.currentTarget, async () => {
+          if (!confirm('確定要把所有變更發佈到網站嗎？')) return;
+          const r = await api('publish', { message: $('message').value });
+          $('publish-log').textContent = r.log.join('\n') + (r.ok ? '\n\n✓ 已推送，GitHub Actions 正在部署。' : '');
+          await loadStatus(false);
+        });
+
+      (async () => {
+        const s = await loadStatus().catch((err) => ($('status-line').textContent = err.message));
+        if (s && s.behind > 0 && s.files.length === 0) {
+          const r = await api('pull', {});
+          $('status-log').textContent = `已自動拉取線上的 ${s.behind} 個新 commit\n${r.log.join('\n')}`;
+          await loadStatus(false);
+        }
+        await loadNotes().catch((err) => ($('notes').innerHTML = `<p class="warn">${esc(err.message)}</p>`));
+      })();
+    </script>
+  </body>
+</html>

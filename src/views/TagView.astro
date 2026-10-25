@@ -1,0 +1,23 @@
+---
+import PostList from '../components/PostList.astro';
+import Base from '../layouts/Base.astro';
+import { tagSlug } from '../lib/blog';
+import { getPosts } from '../lib/content';
+import { localePath, t, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+  tag: string;
+}
+const { locale, tag } = Astro.props;
+const posts = (await getPosts()).filter((p) => p.data.tags.some((x) => tagSlug(x) === tag));
+const label = posts[0]?.data.tags.find((x) => tagSlug(x) === tag) ?? tag;
+---
+
+<Base locale={locale} title={`#${label}`} searchable={false}>
+  <div class="container-page max-w-4xl py-12 sm:py-16">
+    <a href={localePath('/blog/', locale)} class="mb-6 inline-block font-mono text-xs text-muted transition hover:text-accent">← {t(locale, 'blog.title')}</a>
+    <h1 class="mb-6 text-3xl font-bold tracking-tight">{t(locale, 'blog.tagged', { tag: label })}</h1>
+    <PostList posts={posts} locale={locale} />
+  </div>
+</Base>

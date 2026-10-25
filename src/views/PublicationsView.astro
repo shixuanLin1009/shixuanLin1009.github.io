@@ -1,0 +1,37 @@
+---
+import PubItem from '../components/PubItem.astro';
+import Base from '../layouts/Base.astro';
+import { getPublications } from '../lib/content';
+import { t, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const publications = await getPublications();
+const years = [...new Set(publications.map((p) => p.year))].sort((a, b) => b - a);
+---
+
+<Base locale={locale} title={t(locale, 'pub.title')} description={t(locale, 'pub.intro')}>
+  <div class="container-page max-w-4xl py-12 sm:py-16">
+    <header class="mb-12">
+      <p class="eyebrow mb-2">~/publications</p>
+      <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{t(locale, 'pub.title')}</h1>
+      <p class="mt-3 text-muted">{t(locale, 'pub.intro')}</p>
+    </header>
+    {
+      years.map((year) => (
+        <section class="mb-12 grid gap-6 sm:grid-cols-[5rem_1fr]">
+          <h2 class="font-mono text-2xl font-semibold text-muted/60 sm:sticky sm:top-20 sm:self-start">{year}</h2>
+          <div class="space-y-10">
+            {publications
+              .filter((p) => p.year === year)
+              .map((pub) => (
+                <PubItem pub={pub} locale={locale} />
+              ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</Base>

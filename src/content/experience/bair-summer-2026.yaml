@@ -1,0 +1,24 @@
+en:
+  org: UC Berkeley Artificial Intelligence Research (BAIR) Lab — Summer Program
+  role: Visiting Student Researcher
+  type: research
+  location: Berkeley, CA, USA
+  start: 2026-07-01
+  end: 2026-08-31
+  url: https://bair.berkeley.edu/
+  bullets:
+    - Selected as one of 3–6 graduate students from the NCKU Miin Wu School of Computing, with full institutional sponsorship, to attend an intensive AI research program hosted at UC Berkeley.
+    - Joined technical seminars and office hours led by BAIR faculty (Prof. Trevor Darrell, Prof. Sewon Min et al.) and PhD researchers on Computer Vision, Multimodal Models, Robotics and Efficient Deep Learning.
+    - Discussed reward design for my active PTZ tracking research with BAIR researchers, which directly shaped the later model architecture and environment setup.
+    - Synthesized weekly research deliverables and presented key technical insights on foundation models, robotic perception and high-performance deep learning workflows.
+  tags: [Computer Vision, Multimodal Models, Robotics]
+  order: 1
+zh-TW:
+  org: 加州大學柏克萊分校 人工智慧研究實驗室（BAIR）暑期交流計畫
+  role: 訪問學生研究員
+  location: 美國 加州 柏克萊
+  bullets:
+    - 入選成功大學「SOC × BAIR 暑期交流計畫」，獲全額獎學金前往 UC Berkeley BAIR 參加為期六週的學術交流。
+    - 課程依序聚焦大型語言模型、電腦視覺、機器人學、智慧交通、可信賴 AI 與 AI 創業，由 BAIR 教授（Trevor Darrell、Sewon Min 等）與研究員親自授課並面對面討論。
+    - 與 BAIR 研究員討論主動式 PTZ 追蹤研究的獎勵函數設計，直接影響了後續的模型架構與環境設定。
+    - 與不同背景的學員組隊完成期末專題，以英文發表研究想法。

@@ -1,0 +1,12 @@
+en:
+  title: Competitions & Awards
+  description: Competitions, hackathons and honors.
+  resumeTitle: Competitions
+  icon: trophy
+  order: 3
+  layout: cards
+  showOnHome: true
+zh-TW:
+  title: 競賽與獲獎
+  description: 參加過的競賽、黑客松與獲得的榮譽。
+  resumeTitle: 競賽

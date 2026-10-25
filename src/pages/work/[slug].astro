@@ -1,0 +1,11 @@
+---
+import { getCollection } from 'astro:content';
+import WorkView from '../../views/WorkView.astro';
+
+export async function getStaticPaths() {
+  const items = await getCollection('showcase', (e) => import.meta.env.DEV || !e.data.draft);
+  return items.map((e) => ({ params: { slug: e.id } }));
+}
+---
+
+<WorkView locale="en" id={Astro.params.slug} />

@@ -1,0 +1,40 @@
+---
+import { getProfile, getSettings, getSocials } from '../lib/content';
+import { t, type Locale } from '../lib/i18n';
+import { protectedHref } from '../lib/markdown';
+import Icon from './Icon.astro';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const [profile, settings, socials] = await Promise.all([getProfile(locale), getSettings(locale), getSocials()]);
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24 border-t border-line">
+  <div class="container-page flex flex-col gap-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+    <div class="space-y-1">
+      <p>© {year} {profile.name}{settings.footer && <span class="text-muted/80"> · {settings.footer}</span>}</p>
+      <p class="font-mono text-xs">{t(locale, 'footer.built')}</p>
+    </div>
+    <div class="flex items-center gap-1">
+      {
+        socials.map((s) => (
+          <a
+            {...protectedHref(s.url)}
+            class="rounded-md p-2 transition hover:text-fg"
+            aria-label={s.label}
+            title={s.label}
+            {...(s.url.startsWith('http') ? { target: '_blank', rel: 'noopener me' } : {})}
+          >
+            <Icon name={s.platform} size={16} />
+          </a>
+        ))
+      }
+      <a href="/rss.xml" class="rounded-md p-2 transition hover:text-fg" aria-label={t(locale, 'footer.rss')} title="RSS">
+        <Icon name="rss" size={16} />
+      </a>
+    </div>
+  </div>
+</footer>

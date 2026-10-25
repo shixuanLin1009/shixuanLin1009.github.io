@@ -1,0 +1,12 @@
+---
+import { tagSlug } from '../../../lib/blog';
+import { getPosts } from '../../../lib/content';
+import TagView from '../../../views/TagView.astro';
+
+export async function getStaticPaths() {
+  const tags = new Set((await getPosts()).flatMap((p) => p.data.tags.map(tagSlug)));
+  return [...tags].map((tag) => ({ params: { tag } }));
+}
+---
+
+<TagView locale="en" tag={Astro.params.tag} />

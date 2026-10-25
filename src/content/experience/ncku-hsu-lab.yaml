@@ -1,0 +1,21 @@
+en:
+  org: NCKU HSU Lab
+  role: Computer Vision Developer
+  type: research
+  location: Tainan, Taiwan
+  start: 2024-02-01
+  current: true
+  bullets:
+    - Developed and deployed a real-time basketball player tracking system in the cloud, enabling accurate and efficient analysis during games.
+    - Utilized YOLO for object detection and ByteTrack for multi-object tracking, optimizing performance in high-occlusion environments like basketball courts.
+    - Collected and labeled 700 images from the Taiwan professional basketball league (P. LEAGUE+), achieving 84% mAP, 80% precision and 77% recall.
+  tags: [YOLO, ByteTrack, Multi-Object Tracking]
+  order: 2
+zh-TW:
+  org: 成功大學 徐禕佑教授實驗室
+  role: 電腦視覺開發者
+  location: 台灣 台南
+  bullets:
+    - 開發並於雲端部署即時籃球員追蹤系統，讓比賽分析更精準、更有效率。
+    - 以 YOLO 進行物件偵測、ByteTrack 進行多目標追蹤，針對籃球場高度遮擋的情境優化效能。
+    - 蒐集並標註 700 張台灣職業籃球聯盟（P. LEAGUE+）影像，模型達到 84% mAP、80% 精確率與 77% 召回率。

@@ -1,0 +1,10 @@
+en:
+  group: Programming
+  items:
+    - Python (PyTorch, Pandas, OpenCV)
+    - C++
+    - HTML/CSS/JavaScript
+    - Arduino
+  order: 1
+zh-TW:
+  group: 程式語言

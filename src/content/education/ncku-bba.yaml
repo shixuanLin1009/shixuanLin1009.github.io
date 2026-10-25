@@ -1,0 +1,13 @@
+en:
+  school: National Cheng Kung University
+  degree: BBA in Industrial and Information Management
+  location: Tainan, Taiwan
+  start: 2021-09-01
+  end: 2025-06-30
+  courses: Numerical Optimization (A+) · E-Commerce (A+) · Programming and Application (A-)
+  order: 2
+zh-TW:
+  school: 國立成功大學
+  degree: 工業與資訊管理學系 學士
+  location: 台灣 台南
+  courses: 數值最佳化 (A+) · 電子商務 (A+) · 程式設計與應用 (A-)

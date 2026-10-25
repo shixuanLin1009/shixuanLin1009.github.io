@@ -1,0 +1,50 @@
+---
+import type { ShowcaseItem } from '../lib/content';
+import { formatRange, localePath, type Locale } from '../lib/i18n';
+import GenCover from './GenCover.astro';
+
+interface Props {
+  item: ShowcaseItem;
+  locale: Locale;
+  categoryLabel?: string;
+  icon?: string;
+  size?: 'lg' | 'md';
+}
+const { item, locale, categoryLabel, icon, size = 'md' } = Astro.props;
+const href = localePath(`/work/${item.id}/`, locale);
+const tags = item.tags.slice(0, size === 'lg' ? 5 : 4);
+---
+
+<a href={href} class="card card-hover group flex flex-col overflow-hidden">
+  <div class:list={['relative w-full overflow-hidden border-b border-line', size === 'lg' ? 'aspect-[16/9]' : 'aspect-[2/1]']}>
+    {
+      item.cover ? (
+        <img
+          src={item.cover}
+          alt={item.coverAlt ?? item.title}
+          loading="lazy"
+          decoding="async"
+          class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+        />
+      ) : (
+        <GenCover seed={item.id} icon={icon} label={categoryLabel} class="h-full w-full" />
+      )
+    }
+  </div>
+  <div class="flex flex-1 flex-col gap-2 p-4">
+    <p class="font-mono text-[11px] text-muted">{formatRange(item.date, item.endDate, locale, { current: item.ongoing })}{item.org && ` · ${item.org}`}</p>
+    <h3 class:list={['font-semibold leading-snug tracking-tight transition group-hover:text-accent', size === 'lg' ? 'text-lg' : 'text-base']}>
+      {item.title}
+    </h3>
+    <p class="line-clamp-3 text-sm leading-relaxed text-muted">{item.summary}</p>
+    {
+      tags.length > 0 && (
+        <div class="mt-auto flex flex-wrap gap-1.5 pt-2">
+          {tags.map((tag) => (
+            <span class="chip">{tag}</span>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</a>

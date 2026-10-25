@@ -1,0 +1,11 @@
+en:
+  group: AI / ML
+  items:
+    - Deep RL (PPO)
+    - Vision-Language Models (Qwen-VL, InternVL)
+    - Detection & Tracking (YOLO, RT-DETR, ByteTrack)
+    - LLM Agents & RAG (LangChain)
+    - Time-series Forecasting (TFT)
+  order: 2
+zh-TW:
+  group: AI／機器學習

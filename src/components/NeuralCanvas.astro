@@ -1,0 +1,238 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<!--
+  A small feed-forward network drawn on a canvas: signals travel layer to layer,
+  and edges near the pointer light up like attention weights. Pauses when
+  off-screen or in a background tab; static when reduced motion is preferred.
+-->
+<canvas class:list={['neural-canvas pointer-events-none absolute inset-0 h-full w-full', className]} aria-hidden="true"></canvas>
+
+<script>
+  type Node = { x: number; y: number; layer: number; phase: number; glow: number };
+  type Edge = { a: number; b: number; w: number };
+  type Pulse = { edge: number; t: number; speed: number };
+
+  const LAYERS = [4, 6, 7, 7, 5, 3];
+
+  function mulberry32(seed: number) {
+    return () => {
+      seed |= 0;
+      seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function rgba(color: string, alpha: number) {
+    const hex = color.trim().replace('#', '');
+    const n = parseInt(hex.length === 3 ? hex.replace(/./g, '$&$&') : hex, 16);
+    return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+  }
+
+  for (const canvas of document.querySelectorAll<HTMLCanvasElement>('.neural-canvas')) {
+    const ctx = canvas.getContext('2d');
+    const host = canvas.parentElement;
+    if (!ctx || !host) continue;
+
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const rand = mulberry32(1009);
+    let width = 0;
+    let height = 0;
+    let nodes: Node[] = [];
+    let edges: Edge[] = [];
+    let outgoing: number[][] = [];
+    let pulses: Pulse[] = [];
+    let pointer = { x: -9999, y: -9999, active: false };
+    let colors = { accent: '#4f46e5', accent2: '#0891b2', fg: '#0f172a' };
+    let running = false;
+    let visible = true;
+    let last = performance.now();
+    let nextWave = 0;
+
+    const readColors = () => {
+      const s = getComputedStyle(document.documentElement);
+      colors = {
+        accent: s.getPropertyValue('--accent') || colors.accent,
+        accent2: s.getPropertyValue('--accent-2') || colors.accent2,
+        fg: s.getPropertyValue('--fg') || colors.fg,
+      };
+    };
+
+    const build = () => {
+      const rect = host.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // On wide screens the network sits on the right, behind/next to the avatar.
+      const wide = width >= 768;
+      const x0 = wide ? width * 0.42 : width * 0.06;
+      const x1 = wide ? width * 0.97 : width * 0.94;
+      const y0 = height * 0.12;
+      const y1 = height * 0.88;
+
+      nodes = [];
+      LAYERS.forEach((count, layer) => {
+        const x = x0 + ((x1 - x0) * layer) / (LAYERS.length - 1);
+        for (let i = 0; i < count; i++) {
+          const y = y0 + ((y1 - y0) * (i + 0.5)) / count + (rand() - 0.5) * 18;
+          nodes.push({ x: x + (rand() - 0.5) * 24, y, layer, phase: rand() * Math.PI * 2, glow: 0 });
+        }
+      });
+
+      edges = [];
+      outgoing = nodes.map(() => []);
+      nodes.forEach((n, i) => {
+        if (n.layer === LAYERS.length - 1) return;
+        const next = nodes.map((m, j) => ({ m, j })).filter(({ m }) => m.layer === n.layer + 1);
+        next.sort((p, q) => Math.abs(p.m.y - n.y) - Math.abs(q.m.y - n.y));
+        const fan = 2 + Math.floor(rand() * 3);
+        for (const { j } of next.slice(0, fan)) {
+          outgoing[i].push(edges.length);
+          edges.push({ a: i, b: j, w: 0.25 + rand() * 0.75 });
+        }
+      });
+      pulses = [];
+    };
+
+    const pos = (n: Node, time: number) => ({
+      x: n.x + Math.sin(time / 2600 + n.phase) * 3,
+      y: n.y + Math.cos(time / 3100 + n.phase) * 4,
+    });
+
+    const spawnWave = () => {
+      nodes.forEach((n, i) => {
+        if (n.layer === 0 && rand() < 0.7) {
+          n.glow = 1;
+          for (const e of outgoing[i]) if (rand() < 0.6) pulses.push({ edge: e, t: 0, speed: 0.0011 + rand() * 0.0006 });
+        }
+      });
+    };
+
+    const draw = (time: number, dt: number) => {
+      ctx.clearRect(0, 0, width, height);
+      const sigma = Math.min(width, height) * 0.18;
+
+      for (const e of edges) {
+        const a = pos(nodes[e.a], time);
+        const b = pos(nodes[e.b], time);
+        let attn = 0;
+        if (pointer.active) {
+          const mx = (a.x + b.x) / 2 - pointer.x;
+          const my = (a.y + b.y) / 2 - pointer.y;
+          attn = Math.exp(-(mx * mx + my * my) / (2 * sigma * sigma));
+        }
+        ctx.lineWidth = 0.6 + e.w * 0.6 + attn * 1.6;
+        ctx.strokeStyle = attn > 0.05 ? rgba(colors.accent2, 0.1 + attn * 0.55 * e.w) : rgba(colors.fg, 0.07 + e.w * 0.05);
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+
+      const arrived: number[] = [];
+      pulses = pulses.filter((p) => {
+        p.t += p.speed * dt;
+        const e = edges[p.edge];
+        const a = pos(nodes[e.a], time);
+        const b = pos(nodes[e.b], time);
+        const t = Math.min(p.t, 1);
+        const x = a.x + (b.x - a.x) * t;
+        const y = a.y + (b.y - a.y) * t;
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, 7);
+        grad.addColorStop(0, rgba(colors.accent, 0.9));
+        grad.addColorStop(1, rgba(colors.accent, 0));
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, 7, 0, Math.PI * 2);
+        ctx.fill();
+        if (p.t >= 1) {
+          arrived.push(e.b);
+          return false;
+        }
+        return true;
+      });
+      for (const i of arrived) {
+        nodes[i].glow = 1;
+        for (const e of outgoing[i]) if (rand() < 0.55 && pulses.length < 60) pulses.push({ edge: e, t: 0, speed: 0.0011 + rand() * 0.0006 });
+      }
+
+      for (const n of nodes) {
+        const p = pos(n, time);
+        n.glow = Math.max(0, n.glow - dt * 0.0015);
+        let attn = 0;
+        if (pointer.active) {
+          const dx = p.x - pointer.x;
+          const dy = p.y - pointer.y;
+          attn = Math.exp(-(dx * dx + dy * dy) / (2 * sigma * sigma));
+        }
+        const r = 2.6 + n.glow * 2 + attn * 1.5;
+        if (n.glow > 0.02 || attn > 0.1) {
+          ctx.fillStyle = rgba(colors.accent, 0.12 * Math.max(n.glow, attn));
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r * 3.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = n.glow > 0.05 || attn > 0.3 ? rgba(colors.accent, 0.55 + 0.45 * Math.max(n.glow, attn)) : rgba(colors.fg, 0.22);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    };
+
+    const frame = (now: number) => {
+      if (!running) return;
+      const dt = Math.min(now - last, 50);
+      last = now;
+      if (now > nextWave) {
+        spawnWave();
+        nextWave = now + 2200 + rand() * 1600;
+      }
+      draw(now, dt);
+      requestAnimationFrame(frame);
+    };
+
+    const start = () => {
+      if (running || reduced || !visible || document.hidden) return;
+      running = true;
+      last = performance.now();
+      requestAnimationFrame(frame);
+    };
+    const stop = () => {
+      running = false;
+    };
+
+    readColors();
+    build();
+    if (reduced) draw(0, 0);
+    else start();
+
+    new ResizeObserver(() => {
+      build();
+      if (reduced) draw(0, 0);
+    }).observe(host);
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      visible ? start() : stop();
+    }).observe(host);
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+    document.addEventListener('themechange', () => {
+      readColors();
+      if (reduced) draw(0, 0);
+    });
+    host.addEventListener('pointermove', (e) => {
+      const rect = host.getBoundingClientRect();
+      pointer = { x: e.clientX - rect.left, y: e.clientY - rect.top, active: true };
+    });
+    host.addEventListener('pointerleave', () => (pointer.active = false));
+  }
+</script>

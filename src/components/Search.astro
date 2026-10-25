@@ -1,0 +1,86 @@
+---
+import { t, type Locale } from '../lib/i18n';
+import Icon from './Icon.astro';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+---
+
+<div class="site-search contents" data-enabled={import.meta.env.PROD ? 'true' : 'false'} data-placeholder={t(locale, 'search.placeholder')}>
+  <button
+    type="button"
+    class="search-button rounded-md p-2 text-muted transition hover:text-fg"
+    aria-label={t(locale, 'nav.search')}
+    title={import.meta.env.PROD ? `${t(locale, 'nav.search')} (Ctrl+K)` : 'Search runs on the built site (npm run build && npm run preview)'}
+  >
+    <Icon name="search" size={17} />
+  </button>
+</div>
+
+<style is:global>
+  :root {
+    --pf-font: var(--font-sans);
+    --pf-text: var(--fg);
+    --pf-text-secondary: var(--muted);
+    --pf-text-muted: var(--muted);
+    --pf-background: var(--surface);
+    --pf-border: var(--line);
+    --pf-border-focus: var(--accent);
+    --pf-hover: var(--accent-soft);
+    --pf-mark: var(--accent);
+    --pf-skeleton: var(--line);
+    --pf-skeleton-shine: var(--bg);
+    --pf-outline-focus: var(--accent);
+    --pf-border-radius: 10px;
+    --pf-modal-backdrop: rgb(5 8 15 / 0.55);
+  }
+</style>
+
+<script>
+  // Pagefind's index only exists in the built site. It is built as a single
+  // Chinese-segmented index (`--force-language zh`), so English and Chinese
+  // pages are searched together. The web components load on first use.
+  type PagefindGlobal = { configureInstance: (name: string, opts: Record<string, unknown>) => void };
+
+  const host = document.querySelector<HTMLElement>('.site-search');
+  const button = host?.querySelector<HTMLButtonElement>('.search-button');
+  let loaded: Promise<void> | undefined;
+
+  function load() {
+    if (loaded) return loaded;
+    loaded = (async () => {
+      const css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = '/pagefind/pagefind-component-ui.css';
+      document.head.append(css);
+      const src = '/pagefind/pagefind-component-ui.js';
+      await import(/* @vite-ignore */ src);
+      const pf = (window as unknown as { PagefindComponents?: PagefindGlobal }).PagefindComponents;
+      pf?.configureInstance('default', { bundlePath: '/pagefind/' });
+      const modal = document.createElement('pagefind-modal');
+      modal.setAttribute('reset-on-close', '');
+      document.body.append(modal);
+      await customElements.whenDefined('pagefind-modal');
+    })();
+    return loaded;
+  }
+
+  async function open() {
+    await load();
+    const modal = document.querySelector('pagefind-modal') as (HTMLElement & { open?: () => void }) | null;
+    if (modal?.open) modal.open();
+    else modal?.setAttribute('open', '');
+  }
+
+  if (host?.dataset.enabled === 'true') {
+    button?.addEventListener('click', open);
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        open();
+      }
+    });
+  }
+</script>

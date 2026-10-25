@@ -1,11 +1,28 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# generated resume PDFs and data (built in CI and by `npm run resume`)
+public/cv/
+resume/data*.json
+resume/private/
+resume/fonts/
+
+# local-only settings and private data (phone number etc.)
+.env
+.env.local
+.env.*.local
+studio.config.local.json
+
+# local tooling
+.claude/
+
+# logs / OS
+npm-debug.log*
 .DS_Store
-.gitignore
-node_modules
-public
-prof
-tsconfig.tsbuildinfo
-.obsidian
-.quartz-cache
-private/
-.replit
-replit.nix
+Thumbs.db
+.vscode/
+.idea/

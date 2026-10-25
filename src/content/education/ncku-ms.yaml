@@ -1,0 +1,23 @@
+en:
+  school: National Cheng Kung University
+  degree: M.S. in School of Computing (Artificial Intelligence)
+  location: Tainan, Taiwan
+  start: 2025-09-01
+  end: 2027-06-30
+  expected: true
+  courses: Computer Vision Practice and Deep Learning (A+) · Machine Learning (A) · Image Recognition and Robotics (A) · Digital IC Design (A-)
+  bullets:
+    - Focusing on Computer Vision, Reinforcement Learning, and LLM applications.
+    - Developing **VolleyCC** (Volleyball Comprehension Captioning) to generate descriptive narratives from game footage.
+    - Implementing **RECOBOT**, an automatic tissue-catching robot based on JetBot featuring YOLO and a Kalman Filter.
+  url: https://www.ncku.edu.tw/
+  order: 1
+zh-TW:
+  school: 國立成功大學
+  degree: 敏求智慧運算學院 智慧科技系統碩士學程
+  location: 台灣 台南
+  courses: 電腦視覺實務與深度學習 (A+) · 機器學習 (A) · 影像辨識與機器人 (A) · 數位積體電路設計 (A-)
+  bullets:
+    - 研究方向為電腦視覺、強化學習與大型語言模型應用。
+    - 開發 **VolleyCC**（排球賽事敘述生成），從比賽影片自動產生賽事描述。
+    - 實作 **RECOBOT**：以 JetBot 為平台，結合 YOLO 與卡爾曼濾波器的自動接物機器人。

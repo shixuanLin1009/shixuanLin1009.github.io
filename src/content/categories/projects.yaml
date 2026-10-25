@@ -1,0 +1,12 @@
+en:
+  title: Projects
+  description: Systems and applications I have built.
+  resumeTitle: Projects
+  icon: code
+  order: 2
+  layout: cards
+  showOnHome: true
+zh-TW:
+  title: 專案作品
+  description: 我實作過的系統與應用。
+  resumeTitle: 專案作品

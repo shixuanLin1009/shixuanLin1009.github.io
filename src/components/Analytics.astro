@@ -1,0 +1,46 @@
+---
+import { getSettings } from '../lib/content';
+import type { Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { analytics } = await getSettings(Astro.props.locale);
+// Only in production builds, so local previews never count as visits.
+const enabled = import.meta.env.PROD && analytics.provider !== 'none' && !!analytics.id;
+const gaSnippet = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config',${JSON.stringify(analytics.id ?? '')});`;
+---
+
+{
+  enabled && analytics.provider === 'goatcounter' && (
+    <script
+      is:inline
+      async
+      data-goatcounter={`https://${analytics.id}.goatcounter.com/count`}
+      src={analytics.scriptUrl ?? 'https://gc.zgo.at/count.js'}
+    />
+  )
+}
+{
+  enabled && analytics.provider === 'umami' && (
+    <script is:inline defer src={analytics.scriptUrl ?? 'https://cloud.umami.is/script.js'} data-website-id={analytics.id} />
+  )
+}
+{
+  enabled && analytics.provider === 'cloudflare' && (
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={JSON.stringify({ token: analytics.id })}
+    />
+  )
+}
+{
+  enabled && analytics.provider === 'google' && (
+    <>
+      <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${analytics.id}`} />
+      <script is:inline set:html={gaSnippet} />
+    </>
+  )
+}

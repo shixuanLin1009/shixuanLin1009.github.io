@@ -1,0 +1,158 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Prose from '../../components/Prose.astro';
+import Base from '../../layouts/Base.astro';
+import { categoryLabel, resolveCover, tagSlug } from '../../lib/blog';
+import { getPosts, readingMinutes } from '../../lib/content';
+import { formatDay, isoDay, localePath, t, type Locale } from '../../lib/i18n';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, newer: posts[i - 1], older: posts[i + 1] },
+  }));
+}
+
+const { post, newer, older } = Astro.props;
+// A post's page chrome follows the post's own language.
+const locale: Locale = post.data.lang;
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const cover = resolveCover(post);
+---
+
+<Base
+  locale={locale}
+  title={post.data.title}
+  description={post.data.description}
+  image={typeof cover === 'string' ? cover : cover?.src}
+  type="article"
+  alternates={false}
+>
+  <div class="container-page py-12 sm:py-16 lg:grid lg:max-w-6xl lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-12">
+    <article class="mx-auto w-full max-w-3xl">
+      <a href={localePath('/blog/', locale)} class="mb-8 inline-block font-mono text-xs text-muted transition hover:text-accent" data-pagefind-ignore>
+        ← {t(locale, 'blog.title')}
+      </a>
+      <header class="mb-10">
+        <div class="mb-3 flex flex-wrap items-center gap-2 font-mono text-xs text-muted" data-pagefind-ignore>
+          <a href={`${localePath('/blog/', locale)}?c=${post.data.category}`} class="text-accent">{categoryLabel(post.data.category, locale)}</a>
+          <span>·</span>
+          <time datetime={isoDay(post.data.date)}>{formatDay(post.data.date, locale)}</time>
+          <span>·</span>
+          <span>{t(locale, 'blog.minRead', { n: readingMinutes(post.body) })}</span>
+          {
+            post.data.updated && (
+              <>
+                <span>·</span>
+                <span>
+                  {t(locale, 'blog.updated')} {formatDay(post.data.updated, locale)}
+                </span>
+              </>
+            )
+          }
+        </div>
+        <h1 class="text-3xl leading-tight font-bold tracking-tight sm:text-4xl">{post.data.title}</h1>
+        {post.data.description && <p class="mt-4 text-lg leading-relaxed text-muted">{post.data.description}</p>}
+        {
+          post.data.tags.length > 0 && (
+            <div class="mt-5 flex flex-wrap gap-1.5" data-pagefind-ignore>
+              {post.data.tags.map((tag) => (
+                <a href={localePath(`/blog/tags/${tagSlug(tag)}/`, locale)} class="chip transition hover:border-accent hover:text-accent">
+                  #{tag}
+                </a>
+              ))}
+            </div>
+          )
+        }
+      </header>
+
+      {
+        cover &&
+          (typeof cover === 'string' ? (
+            <img src={cover} alt="" class="mb-10 w-full rounded-xl border border-line" />
+          ) : (
+            <Image src={cover} alt="" class="mb-10 w-full rounded-xl border border-line" />
+          ))
+      }
+
+      <Prose locale={locale}>
+        <Content />
+      </Prose>
+
+      <nav class="mt-16 grid gap-4 border-t border-line pt-8 sm:grid-cols-2" data-pagefind-ignore>
+        {
+          older ? (
+            <a href={`/blog/${older.id}/`} class="card card-hover p-4">
+              <p class="font-mono text-[11px] text-muted">← {t(locale, 'blog.prev')}</p>
+              <p class="mt-1 font-medium leading-snug">{older.data.title}</p>
+            </a>
+          ) : (
+            <span />
+          )
+        }
+        {
+          newer && (
+            <a href={`/blog/${newer.id}/`} class="card card-hover p-4 text-right">
+              <p class="font-mono text-[11px] text-muted">{t(locale, 'blog.next')} →</p>
+              <p class="mt-1 font-medium leading-snug">{newer.data.title}</p>
+            </a>
+          )
+        }
+      </nav>
+    </article>
+
+    {
+      toc.length > 1 && (
+        <aside class="hidden lg:block" data-pagefind-ignore>
+          <nav class="sticky top-24 text-sm" aria-label={t(locale, 'blog.toc')}>
+            <p class="eyebrow mb-3">{t(locale, 'blog.toc')}</p>
+            <ul class="toc space-y-1.5 border-l border-line">
+              {toc.map((h) => (
+                <li>
+                  <a
+                    href={`#${h.slug}`}
+                    data-slug={h.slug}
+                    class:list={['-ml-px block border-l border-transparent leading-snug text-muted transition hover:text-fg', h.depth === 3 ? 'pl-6 text-[13px]' : 'pl-3']}
+                  >
+                    {h.text.replace(/#$/, '')}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .toc a.active {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+</style>
+
+<script>
+  // Highlight the TOC entry for the section in view.
+  const links = new Map([...document.querySelectorAll<HTMLAnchorElement>('.toc a')].map((a) => [a.dataset.slug, a]));
+  if (links.size) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          for (const a of links.values()) a.classList.remove('active');
+          links.get(e.target.id)?.classList.add('active');
+        }
+      },
+      { rootMargin: '0px 0px -70% 0px' },
+    );
+    for (const slug of links.keys()) {
+      const el = slug && document.getElementById(slug);
+      if (el) observer.observe(el);
+    }
+  }
+</script>

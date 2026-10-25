@@ -1,0 +1,123 @@
+---
+import { getProfile } from '../lib/content';
+import { localePath, switchLocalePath, t, type Locale } from '../lib/i18n';
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import Search from './Search.astro';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const profile = await getProfile(locale);
+const other: Locale = locale === 'en' ? 'zh-TW' : 'en';
+
+const nav = [
+  { href: localePath('/', locale), label: t(locale, 'nav.about'), match: /^\/(zh\/?)?$|\/work\// },
+  { href: localePath('/publications/', locale), label: t(locale, 'nav.publications'), match: /\/publications/ },
+  { href: localePath('/resume/', locale), label: t(locale, 'nav.resume'), match: /\/resume/ },
+  { href: localePath('/blog/', locale), label: t(locale, 'nav.blog'), match: /\/blog/ },
+];
+const path = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-40 border-b border-line/70 bg-bg/75 backdrop-blur-md">
+  <div class="container-page flex h-14 items-center gap-4">
+    <a href={localePath('/', locale)} class="group flex items-center gap-2 font-semibold tracking-tight" aria-label={profile.name}>
+      <Logo class="h-6 w-6 text-accent transition group-hover:rotate-12" />
+      <span>{profile.name}</span>
+    </a>
+
+    <nav class="ml-auto hidden items-center gap-1 md:flex" aria-label="Main">
+      {
+        nav.map((item) => {
+          const active = item.match.test(path);
+          return (
+            <a
+              href={item.href}
+              aria-current={active ? 'page' : undefined}
+              class:list={[
+                'rounded-md px-3 py-1.5 text-sm transition hover:text-fg',
+                active ? 'text-fg font-medium' : 'text-muted',
+              ]}
+            >
+              {item.label}
+            </a>
+          );
+        })
+      }
+    </nav>
+
+    <div class="ml-auto flex items-center gap-1 md:ml-2">
+      <Search locale={locale} />
+      <a
+        href={switchLocalePath(Astro.url, other)}
+        class="lang-switch rounded-md px-2 py-1.5 font-mono text-xs text-muted transition hover:text-fg"
+        aria-label={t(locale, 'lang.switchLabel')}
+        data-lang={other}
+        hreflang={other === 'en' ? 'en' : 'zh-Hant-TW'}
+      >
+        {t(locale, 'lang.switch')}
+      </a>
+      <button
+        type="button"
+        class="theme-toggle rounded-md p-2 text-muted transition hover:text-fg"
+        aria-label={t(locale, 'theme.toggle')}
+      >
+        <Icon name="sun" size={17} class="hidden dark:block" />
+        <Icon name="moon" size={17} class="block dark:hidden" />
+      </button>
+      <button
+        type="button"
+        class="menu-toggle rounded-md p-2 text-muted transition hover:text-fg md:hidden"
+        aria-label={t(locale, 'nav.menu')}
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+      >
+        <Icon name="menu" size={18} />
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-nav" class="hidden border-t border-line md:hidden" aria-label="Mobile">
+    <div class="container-page flex flex-col py-2">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            aria-current={item.match.test(path) ? 'page' : undefined}
+            class="rounded-md px-2 py-2.5 text-sm text-muted aria-[current=page]:font-medium aria-[current=page]:text-fg"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </div>
+  </nav>
+</header>
+
+<script>
+  const root = document.documentElement;
+  document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem('theme', next);
+    } catch {}
+    document.dispatchEvent(new CustomEvent('themechange', { detail: next }));
+  });
+
+  const menuButton = document.querySelector<HTMLButtonElement>('.menu-toggle');
+  const mobileNav = document.getElementById('mobile-nav');
+  menuButton?.addEventListener('click', () => {
+    const open = menuButton.getAttribute('aria-expanded') === 'true';
+    menuButton.setAttribute('aria-expanded', String(!open));
+    mobileNav?.classList.toggle('hidden', open);
+  });
+
+  document.querySelector<HTMLAnchorElement>('.lang-switch')?.addEventListener('click', (e) => {
+    try {
+      localStorage.setItem('lang', (e.currentTarget as HTMLAnchorElement).dataset.lang ?? '');
+    } catch {}
+  });
+</script>

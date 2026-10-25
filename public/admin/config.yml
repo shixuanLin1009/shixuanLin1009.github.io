@@ -1,0 +1,448 @@
+# Sveltia CMS — https://sveltiacms.app
+# Online:  https://shixuanlin1009.github.io/admin/  → "Sign In with Token" (GitHub fine-grained token, Contents: read & write)
+# Local:   npm run dev → http://localhost:4321/admin/index.html → "Work with Local Repository" (Chrome / Edge)
+
+backend:
+  name: github
+  repo: shixuanLin1009/shixuanLin1009.github.io
+  branch: main
+  commit_messages:
+    create: 'content: create {{collection}} "{{slug}}"'
+    update: 'content: update {{collection}} "{{slug}}"'
+    delete: 'content: delete {{collection}} "{{slug}}"'
+    uploadMedia: 'media: upload "{{path}}"'
+    deleteMedia: 'media: delete "{{path}}"'
+
+site_url: https://shixuanlin1009.github.io
+display_url: https://shixuanlin1009.github.io
+logo:
+  src: /favicon.svg
+
+media_folder: public/uploads
+public_folder: /uploads
+
+output:
+  omit_empty_optional_fields: true
+
+media_libraries:
+  default:
+    config:
+      slugify_filename: true
+      transformations:
+        raster_image:
+          format: webp
+          quality: 85
+          width: 2400
+          height: 2400
+
+i18n:
+  structure: multiple_folders
+  locales: [en, zh-TW]
+  default_locale: en
+
+collections:
+  # ------------------------------------------------------------------ 網站設定
+  - name: site
+    label: 網站設定 Site
+    icon: settings
+    i18n: true
+    files:
+      - name: profile
+        label: 個人資料 Profile
+        file: src/content/singletons/profile.yaml
+        i18n: true
+        fields:
+          - { name: name, label: 姓名 Name, widget: string, i18n: true, required: [en] }
+          - { name: headline, label: 頭銜 Headline, widget: string, i18n: true, required: [en], hint: 'e.g. AI Researcher / Engineer' }
+          - { name: tagline, label: 研究方向一行 Tagline, widget: string, i18n: true, required: false }
+          - { name: affiliation, label: 單位 Affiliation, widget: string, i18n: true, required: false }
+          - name: bio
+            label: 首頁短介紹 Short bio
+            widget: text
+            i18n: true
+            required: [en]
+            hint: 支援 **粗體**、*斜體*、[連結](https://…)；空一行分段。
+          - { name: about, label: 關於我（較長）About, widget: text, i18n: true, required: false }
+          - name: resumeSummary
+            label: 履歷摘要 Resume summary
+            widget: text
+            i18n: true
+            required: false
+            hint: 履歷 PDF 與網頁履歷最上方的 Summary；留空則使用 Short bio。
+          - { name: avatar, label: 大頭照 Avatar, widget: image, i18n: duplicate, required: false }
+          - { name: location, label: 地點 Location, widget: string, i18n: true, required: false }
+          - { name: email, label: Email, widget: string, i18n: duplicate, required: false }
+          - { name: motto, label: 座右銘 Motto, widget: string, i18n: true, required: false }
+          - name: interests
+            label: 研究興趣 Research interests
+            widget: list
+            i18n: true
+            required: false
+            field: { name: interest, label: Interest, widget: string }
+          - name: nameVariants
+            label: 論文上的名字寫法 Name variants
+            widget: list
+            i18n: false
+            required: false
+            hint: 在 Publications 作者列表中自動加粗這些名字。
+            field: { name: variant, label: Variant, widget: string }
+
+      - name: socials
+        label: 社群連結 Social links
+        file: src/content/singletons/socials.yaml
+        i18n: false
+        fields:
+          - name: items
+            label: 連結 Links
+            label_singular: 連結
+            widget: list
+            collapsed: auto
+            summary: '{{label}} — {{url}}'
+            fields:
+              - name: platform
+                label: 平台 Platform
+                widget: select
+                options: [github, email, linkedin, scholar, orcid, researchgate, instagram, facebook, threads, x, youtube, medium, huggingface, kaggle, bilibili, website, other]
+              - { name: label, label: 顯示名稱 Label, widget: string }
+              - { name: url, label: 網址 URL, widget: string, hint: 'Email 請寫 mailto:you@example.com' }
+              - { name: showInHero, label: 顯示在首頁 Show in hero, widget: boolean, default: true, required: false }
+              - { name: showOnResume, label: 顯示在履歷 Show on resume, widget: boolean, default: false, required: false }
+              - { name: hidden, label: 隱藏 Hidden, widget: boolean, default: false, required: false }
+
+      - name: settings
+        label: 網站資訊 Settings
+        file: src/content/singletons/settings.yaml
+        i18n: true
+        fields:
+          - { name: title, label: 網站標題 Site title, widget: string, i18n: true, required: [en] }
+          - { name: description, label: 網站描述（SEO）Description, widget: text, i18n: true, required: [en] }
+          - { name: footer, label: 頁尾文字 Footer, widget: string, i18n: true, required: false }
+          - name: palette
+            label: 主色 Accent palette
+            widget: select
+            i18n: false
+            default: ocean
+            options:
+              - { label: Ocean Teal 深海青, value: ocean }
+              - { label: Lagoon 潟湖青, value: lagoon }
+              - { label: Petrol 石油藍, value: petrol }
+              - { label: Graphite 石墨＋橘, value: graphite }
+              - { label: Graphite Teal 石墨＋青, value: graphite-teal }
+              - { label: Slate 板岩灰藍, value: slate }
+          - name: analytics
+            label: 流量分析 Analytics
+            widget: object
+            i18n: false
+            required: false
+            fields:
+              - { name: provider, label: 服務 Provider, widget: select, options: [none, goatcounter, umami, cloudflare, google], default: none }
+              - { name: id, label: 站點代碼 Site code / ID, widget: string, required: false, hint: 'GoatCounter：填 https://<代碼>.goatcounter.com 的 <代碼>' }
+              - { name: scriptUrl, label: 自訂 script URL, widget: string, required: false }
+
+      - name: resume
+        label: 履歷章節順序 Resume layout
+        file: src/content/singletons/resume.yaml
+        i18n: false
+        fields:
+          - name: sections
+            label: 章節 Sections
+            label_singular: 章節
+            widget: list
+            collapsed: auto
+            summary: '{{source}} {{category}}'
+            hint: 決定網頁履歷與 PDF 的章節順序。category 類型會列出該分類中「放進履歷」的作品。
+            fields:
+              - { name: source, label: 來源 Source, widget: select, options: [summary, education, experience, publications, category, skills] }
+              - { name: category, label: 分類 Category, widget: relation, collection: categories, value_field: '{{slug}}', search_fields: [title], display_fields: [title], required: false }
+              - { name: titleEn, label: 自訂英文標題, widget: string, required: false }
+              - { name: titleZh, label: 自訂中文標題, widget: string, required: false }
+
+  # ------------------------------------------------------------------ About 分類
+  - name: categories
+    label: 作品分類 Categories
+    label_singular: 分類
+    icon: category
+    folder: src/content/categories
+    format: yaml
+    extension: yaml
+    create: true
+    slug: '{{title}}'
+    identifier_field: title
+    sortable_fields: [order, title]
+    i18n: { structure: single_file }
+    description: 首頁 About 的區塊。新增一個分類，首頁就會多一個區塊（例如 Talks、Teaching）。
+    fields:
+      - { name: title, label: 名稱 Title, widget: string, i18n: true, required: [en] }
+      - { name: description, label: 說明 Description, widget: string, i18n: true, required: false }
+      - { name: resumeTitle, label: 履歷章節名稱 Resume section title, widget: string, i18n: true, required: false }
+      - { name: icon, label: 圖示 Icon, widget: select, options: [flask, code, trophy, badge, award, book, lightbulb, users, cpu, sparkles, video, briefcase, graduation, newspaper], default: sparkles, i18n: duplicate, required: false }
+      - { name: order, label: 排序 Order, widget: number, value_type: int, default: 10, i18n: duplicate }
+      - { name: layout, label: 版型 Layout, widget: select, options: [cards, list], default: cards, i18n: duplicate }
+      - { name: showOnHome, label: 顯示在首頁 Show on home, widget: boolean, default: true, i18n: duplicate, required: false }
+
+  # ------------------------------------------------------------------ 作品 / 競賽 / 證照
+  - name: showcase
+    label: 作品・研究・競賽 Showcase
+    label_singular: 項目
+    icon: deployed_code
+    folder: src/content/showcase
+    format: frontmatter
+    extension: md
+    create: true
+    slug: '{{title}}'
+    identifier_field: title
+    summary: '{{title}} · {{category}}'
+    sortable_fields: [date, title, order]
+    view_groups:
+      - { label: 分類, field: category }
+    i18n: true
+    media_folder: /public/uploads/showcase
+    public_folder: /uploads/showcase
+    fields:
+      - { name: title, label: 標題 Title, widget: string, i18n: true, required: [en] }
+      - { name: summary, label: 一句話簡介 Summary, widget: text, i18n: true, required: [en] }
+      - { name: category, label: 分類 Category, widget: relation, collection: categories, value_field: '{{slug}}', search_fields: [title], display_fields: [title], i18n: duplicate }
+      - { name: date, label: 開始日期 Start, widget: datetime, type: date, i18n: duplicate }
+      - { name: endDate, label: 結束日期 End, widget: datetime, type: date, i18n: duplicate, required: false }
+      - { name: ongoing, label: 進行中 Ongoing, widget: boolean, default: false, i18n: duplicate, required: false }
+      - { name: role, label: 角色 Role, widget: string, i18n: true, required: false }
+      - { name: org, label: 單位／場合 Organization / venue, widget: string, i18n: true, required: false }
+      - { name: location, label: 地點 Location, widget: string, i18n: true, required: false }
+      - { name: tags, label: 技術標籤 Tags, widget: list, i18n: duplicate, required: false, hint: 以逗號分隔 }
+      - { name: cover, label: 封面圖 Cover, widget: image, i18n: duplicate, required: false, hint: 沒有封面時會自動產生圖樣 }
+      - { name: coverAlt, label: 封面說明 Cover alt text, widget: string, i18n: true, required: false }
+      - name: links
+        label: 連結 Links (Paper / Code / Demo…)
+        widget: list
+        i18n: duplicate
+        required: false
+        summary: '{{label}}'
+        fields:
+          - { name: label, label: 文字 Label, widget: string }
+          - { name: url, label: 網址 URL, widget: string }
+      - { name: featured, label: 精選（首頁大卡片）Featured, widget: boolean, default: false, i18n: duplicate, required: false }
+      - { name: order, label: 排序 Order, widget: number, value_type: int, default: 10, i18n: duplicate, required: false }
+      - { name: draft, label: 草稿（不公開）Draft, widget: boolean, default: false, i18n: duplicate, required: false }
+      - name: resume
+        label: 履歷 Resume
+        widget: object
+        i18n: true
+        required: false
+        collapsed: true
+        hint: 勾選「放進履歷」後，會出現在網頁履歷與 PDF 中對應分類的章節。
+        fields:
+          - { name: include, label: 放進履歷 Include, widget: boolean, default: false, i18n: duplicate, required: false }
+          - { name: order, label: 履歷內排序 Order, widget: number, value_type: int, default: 10, i18n: duplicate, required: false }
+          - { name: title, label: 履歷用標題（留空用原標題）, widget: string, i18n: true, required: false }
+          - { name: subtitle, label: 副標（斜體那行）Subtitle, widget: string, i18n: true, required: false }
+          - name: bullets
+            label: 條列 Bullets
+            widget: list
+            i18n: true
+            required: false
+            field: { name: bullet, label: Bullet, widget: text }
+      - { name: body, label: 詳細介紹 Details, widget: richtext, i18n: true, required: false }
+
+  # ------------------------------------------------------------------ Publications
+  - name: publications
+    label: 論文 Publications
+    label_singular: 論文
+    icon: article
+    folder: src/content/publications
+    format: yaml
+    extension: yaml
+    create: true
+    slug: '{{venueShort}}-{{year}}-{{title}}'
+    identifier_field: title
+    summary: '{{venueShort}} {{year}} · {{title}}'
+    sortable_fields: [year, title]
+    fields:
+      - { name: title, label: 標題 Title, widget: string }
+      - name: authors
+        label: 作者 Authors
+        widget: list
+        hint: 依順序填寫；共同第一作者在名字後加 *。
+        field: { name: author, label: Author, widget: string }
+      - { name: venue, label: 會議／期刊全名 Venue, widget: string }
+      - { name: venueShort, label: 簡稱 Short venue, widget: string, required: false, hint: 'e.g. ACCV' }
+      - { name: year, label: 年份 Year, widget: number, value_type: int }
+      - { name: status, label: 狀態 Status, widget: select, options: [preprint, submitted, under-review, accepted, published], default: submitted }
+      - { name: type, label: 類型 Type, widget: select, options: [conference, journal, workshop, preprint, thesis], default: conference }
+      - { name: note, label: 備註 Note, widget: string, required: false, hint: 'e.g. First author, Oral' }
+      - { name: abstract, label: 摘要 Abstract, widget: text, required: false }
+      - name: links
+        label: 連結 Links
+        widget: object
+        required: false
+        fields:
+          - { name: pdf, label: PDF, widget: string, required: false }
+          - { name: arxiv, label: arXiv, widget: string, required: false }
+          - { name: code, label: Code, widget: string, required: false }
+          - { name: project, label: Project page, widget: string, required: false }
+          - { name: video, label: Video, widget: string, required: false }
+          - { name: slides, label: Slides, widget: string, required: false }
+          - { name: doi, label: DOI, widget: string, required: false }
+      - { name: bibtex, label: BibTeX, widget: code, default_language: bibtex, output_code_only: true, required: false }
+      - { name: showcase, label: 對應作品頁 Related showcase, widget: relation, collection: showcase, value_field: '{{slug}}', search_fields: [title], display_fields: [title], required: false }
+      - { name: selected, label: 首頁精選 Selected, widget: boolean, default: false, required: false }
+      - { name: showOnResume, label: 放進履歷 Show on resume, widget: boolean, default: true, required: false }
+
+  # ------------------------------------------------------------------ 履歷：學歷 / 經歷 / 技能
+  - name: education
+    label: 學歷 Education
+    label_singular: 學歷
+    icon: school
+    folder: src/content/education
+    format: yaml
+    extension: yaml
+    create: true
+    slug: '{{school}}-{{degree}}'
+    identifier_field: degree
+    summary: '{{degree}} · {{school}}'
+    sortable_fields: [order, start]
+    i18n: { structure: single_file }
+    fields:
+      - { name: school, label: 學校 School, widget: string, i18n: true, required: [en] }
+      - { name: degree, label: 學位／科系 Degree, widget: string, i18n: true, required: [en] }
+      - { name: location, label: 地點 Location, widget: string, i18n: true, required: false }
+      - { name: start, label: 入學 Start, widget: datetime, type: date, i18n: duplicate }
+      - { name: end, label: 畢業 End, widget: datetime, type: date, i18n: duplicate, required: false }
+      - { name: expected, label: 預計畢業 Expected, widget: boolean, default: false, i18n: duplicate, required: false }
+      - { name: gpa, label: GPA, widget: string, i18n: duplicate, required: false }
+      - { name: courses, label: 核心課程 Core courses, widget: string, i18n: true, required: false }
+      - name: bullets
+        label: 條列 Bullets
+        widget: list
+        i18n: true
+        required: false
+        field: { name: bullet, label: Bullet, widget: text }
+      - { name: url, label: 網址 URL, widget: string, i18n: duplicate, required: false }
+      - { name: order, label: 排序 Order, widget: number, value_type: int, default: 10, i18n: duplicate }
+
+  - name: experience
+    label: 經歷 Experience
+    label_singular: 經歷
+    icon: work
+    folder: src/content/experience
+    format: yaml
+    extension: yaml
+    create: true
+    slug: '{{org}}'
+    identifier_field: org
+    summary: '{{role}} · {{org}}'
+    sortable_fields: [order, start]
+    i18n: { structure: single_file }
+    fields:
+      - { name: org, label: 單位 Organization, widget: string, i18n: true, required: [en] }
+      - { name: role, label: 職稱 Role, widget: string, i18n: true, required: [en] }
+      - { name: type, label: 類型 Type, widget: select, options: [research, work, leadership, teaching, other], default: work, i18n: duplicate }
+      - { name: location, label: 地點 Location, widget: string, i18n: true, required: false }
+      - { name: start, label: 開始 Start, widget: datetime, type: date, i18n: duplicate }
+      - { name: end, label: 結束 End, widget: datetime, type: date, i18n: duplicate, required: false }
+      - { name: current, label: 目前在職 Current, widget: boolean, default: false, i18n: duplicate, required: false }
+      - { name: url, label: 網址 URL, widget: string, i18n: duplicate, required: false }
+      - name: bullets
+        label: 條列 Bullets
+        widget: list
+        i18n: true
+        required: false
+        field: { name: bullet, label: Bullet, widget: text }
+      - { name: tags, label: 標籤 Tags, widget: list, i18n: duplicate, required: false }
+      - { name: showOnResume, label: 放進履歷 Show on resume, widget: boolean, default: true, i18n: duplicate, required: false }
+      - { name: order, label: 排序 Order, widget: number, value_type: int, default: 10, i18n: duplicate }
+
+  - name: skills
+    label: 技能 Skills
+    label_singular: 技能群組
+    icon: psychology
+    folder: src/content/skills
+    format: yaml
+    extension: yaml
+    create: true
+    slug: '{{group}}'
+    identifier_field: group
+    sortable_fields: [order]
+    i18n: { structure: single_file }
+    fields:
+      - { name: group, label: 群組 Group, widget: string, i18n: true, required: [en] }
+      - name: items
+        label: 項目 Items
+        widget: list
+        i18n: true
+        required: false
+        field: { name: item, label: Item, widget: string }
+      - { name: order, label: 排序 Order, widget: number, value_type: int, default: 10, i18n: duplicate }
+
+  # ------------------------------------------------------------------ News
+  - name: news
+    label: 動態 News
+    label_singular: 動態
+    icon: campaign
+    folder: src/content/news
+    format: yaml
+    extension: yaml
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{text}}'
+    identifier_field: text
+    summary: '{{date}} · {{text}}'
+    sortable_fields: [date]
+    i18n: { structure: single_file }
+    fields:
+      - { name: date, label: 日期 Date, widget: datetime, type: date, i18n: duplicate, default: '{{now}}' }
+      - { name: text, label: 內容 Text, widget: text, i18n: true, required: [en], hint: '支援 **粗體** 與 [連結](https://…)' }
+      - { name: link, label: 連結 Link, widget: string, i18n: duplicate, required: false }
+
+  # ------------------------------------------------------------------ Blog
+  - name: blog
+    label: 部落格 Blog
+    label_singular: 文章
+    icon: edit_note
+    folder: src/content/blog
+    path: '{{slug}}/index'
+    format: frontmatter
+    extension: md
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{title}}'
+    identifier_field: title
+    summary: '{{date}} · {{title}}'
+    sortable_fields: [date, title]
+    view_groups:
+      - { label: 分類, field: category }
+    media_folder: ''
+    public_folder: ''
+    description: 'Obsidian 同步來的文章（有 obsidian 欄位）請回 Obsidian 修改，否則下次同步會被覆蓋。'
+    fields:
+      - { name: title, label: 標題 Title, widget: string }
+      - { name: description, label: 摘要 Description, widget: text, required: false }
+      - { name: date, label: 發佈日期 Date, widget: datetime, type: date, default: '{{now}}' }
+      - { name: updated, label: 更新日期 Updated, widget: datetime, type: date, required: false }
+      - name: lang
+        label: 語言 Language
+        widget: select
+        default: zh-TW
+        options:
+          - { label: 中文, value: zh-TW }
+          - { label: English, value: en }
+      - name: category
+        label: 分類 Category
+        widget: select
+        default: ideas
+        options:
+          - { label: 讀書心得 Reading notes, value: reading }
+          - { label: 論文心得 Paper notes, value: paper }
+          - { label: 個人發想 Ideas, value: ideas }
+      - { name: tags, label: 標籤 Tags, widget: list, required: false, hint: 以逗號分隔 }
+      - { name: cover, label: 封面 Cover, widget: image, required: false }
+      - { name: draft, label: 草稿 Draft, widget: boolean, default: false, required: false }
+      - name: obsidian
+        label: Obsidian 來源（自動）
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { name: source, label: 筆記路徑, widget: string, readonly: true, required: false }
+          - { name: hash, label: Hash, widget: string, readonly: true, required: false }
+      - name: body
+        label: 內文 Body
+        widget: richtext
+        hint: '工具列「＋」可插入 YouTube／影片／Callout；數學式用 $…$ 或 $$…$$。'

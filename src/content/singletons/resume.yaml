@@ -1,0 +1,14 @@
+sections:
+  - source: summary
+  - source: education
+  - source: experience
+  - source: publications
+  - source: category
+    category: research
+  - source: category
+    category: projects
+  - source: category
+    category: competitions
+  - source: category
+    category: certificates
+  - source: skills

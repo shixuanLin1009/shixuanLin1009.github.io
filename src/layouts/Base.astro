@@ -1,0 +1,107 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/noto-sans-tc';
+import '../styles/global.css';
+import Analytics from '../components/Analytics.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import LangSuggest from '../components/LangSuggest.astro';
+import PalettePicker from '../components/PalettePicker.astro';
+import { getProfile, getSettings } from '../lib/content';
+import { htmlLang, switchLocalePath, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+  title?: string;
+  description?: string;
+  image?: string;
+  /** Override the document language (blog posts keep their own language). */
+  contentLang?: Locale;
+  /** Set false for pages that exist in one language only. */
+  alternates?: boolean;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+  /** Include this page in the site search index (list pages opt out). */
+  searchable?: boolean;
+}
+
+const { locale, title, description, image, contentLang, alternates = true, type = 'website', noindex = false, searchable = true } = Astro.props;
+const [settings, profile] = await Promise.all([getSettings(locale), getProfile(locale)]);
+const pageTitle = title ? `${title} · ${profile.name}` : settings.title;
+const pageDescription = description ?? settings.description;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image ?? profile.avatar ?? '/favicon.svg', Astro.site);
+const lang = htmlLang[contentLang ?? locale];
+const other: Locale = locale === 'en' ? 'zh-TW' : 'en';
+---
+
+<!doctype html>
+<html lang={lang} data-theme="light" data-palette={settings.palette}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonical} />
+    {
+      alternates && (
+        <>
+          <link rel="alternate" hreflang={htmlLang[locale]} href={canonical} />
+          <link rel="alternate" hreflang={htmlLang[other]} href={new URL(switchLocalePath(Astro.url, other), Astro.site)} />
+        </>
+      )
+    }
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${profile.name} — Blog`} href="/rss.xml" />
+    <meta name="theme-color" content="#fafbfd" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#090c13" media="(prefers-color-scheme: dark)" />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={lang.replace('-Hant', '').replace('-', '_')} />
+    <meta name="twitter:card" content="summary" />
+    <script is:inline>
+      (() => {
+        let stored = null;
+        try {
+          stored = localStorage.getItem('theme');
+        } catch {}
+        const dark = stored ? stored === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      })();
+    </script>
+    {
+      import.meta.env.DEV && (
+        <script is:inline>
+          try {
+            const p = localStorage.getItem('palette-preview');
+            if (p) document.documentElement.dataset.palette = p;
+          } catch {}
+        </script>
+      )
+    }
+    <slot name="head" />
+    <Analytics locale={locale} />
+  </head>
+  <body>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-surface focus:px-3 focus:py-2">Skip to content</a>
+    <Header locale={locale} />
+    {locale === 'en' && <LangSuggest />}
+    <main id="main" class="flex-1" data-pagefind-body={noindex || !searchable ? undefined : ''}>
+      <slot />
+    </main>
+    <Footer locale={locale} />
+    {import.meta.env.DEV && <PalettePicker />}
+    <script>
+      // Restore obfuscated mailto: links (see protectedHref in src/lib/markdown.ts).
+      for (const a of document.querySelectorAll<HTMLAnchorElement>('a[data-m]')) {
+        const decoded = new TextDecoder().decode(Uint8Array.from(atob(a.dataset.m ?? ''), (c) => c.charCodeAt(0)));
+        a.href = [...decoded].reverse().join('');
+      }
+    </script>
+  </body>
+</html>

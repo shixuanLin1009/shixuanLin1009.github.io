@@ -1,0 +1,61 @@
+---
+import { palettes } from '../schemas';
+
+// Dev-only: preview accent palettes before choosing one in Settings → palette.
+const swatches: Record<(typeof palettes)[number], [string, string, string]> = {
+  ocean: ['#0e7490', '#0284c7', 'Ocean Teal 深海青'],
+  lagoon: ['#0f766e', '#0891b2', 'Lagoon 潟湖青'],
+  petrol: ['#155e75', '#475569', 'Petrol 石油藍'],
+  graphite: ['#18181b', '#f97316', 'Graphite 石墨＋橘'],
+  'graphite-teal': ['#18181b', '#0891b2', 'Graphite Teal 石墨＋青'],
+  slate: ['#334155', '#0ea5e9', 'Slate 板岩灰藍'],
+};
+---
+
+<div class="palette-picker fixed right-4 bottom-16 z-50 flex items-center gap-2 rounded-full border border-line bg-surface/95 py-1.5 pr-3 pl-2 text-xs shadow-lg backdrop-blur">
+  {
+    palettes.map((p) => (
+      <button
+        type="button"
+        data-palette-option={p}
+        data-name={swatches[p][2]}
+        title={swatches[p][2]}
+        aria-label={swatches[p][2]}
+        class="h-6 w-6 rounded-full border-2 border-surface ring-1 ring-line transition hover:scale-110"
+        style={`background: linear-gradient(135deg, ${swatches[p][0]} 50%, ${swatches[p][1]} 50%)`}
+      />
+    ))
+  }
+  <span class="palette-name ml-1 font-mono text-[11px] text-muted"></span>
+</div>
+
+<style>
+  [data-palette-option][aria-pressed='true'] {
+    outline: 2px solid var(--fg);
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-palette-option]')];
+  const label = document.querySelector('.palette-name');
+  const mark = () => {
+    for (const b of buttons) {
+      const on = b.dataset.paletteOption === root.dataset.palette;
+      b.setAttribute('aria-pressed', String(on));
+      if (on && label) label.textContent = b.dataset.name ?? '';
+    }
+  };
+  mark();
+  for (const b of buttons) {
+    b.addEventListener('click', () => {
+      root.dataset.palette = b.dataset.paletteOption;
+      try {
+        localStorage.setItem('palette-preview', b.dataset.paletteOption ?? '');
+      } catch {}
+      mark();
+      document.dispatchEvent(new CustomEvent('themechange'));
+    });
+  }
+</script>

@@ -1,0 +1,117 @@
+---
+import Icon from '../components/Icon.astro';
+import Prose from '../components/Prose.astro';
+import PubItem from '../components/PubItem.astro';
+import Base from '../layouts/Base.astro';
+import { getCategories, getPublications, getShowcase, renderShowcase } from '../lib/content';
+import { formatRange, localePath, t, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+  id: string;
+}
+const { locale, id } = Astro.props;
+const [showcase, categories, publications] = await Promise.all([getShowcase(locale), getCategories(locale), getPublications()]);
+const item = showcase.find((i) => i.id === id)!;
+const category = categories.find((c) => c.id === item.category);
+const { Content } = await renderShowcase(item, locale);
+const related = publications.filter((p) => p.showcase === item.id);
+const siblings = showcase.filter((i) => i.category === item.category);
+const pos = siblings.findIndex((i) => i.id === item.id);
+const prev = siblings[pos - 1];
+const next = siblings[pos + 1];
+const usingZhBody = locale === 'zh-TW' && !!item.translation?.body?.trim();
+const contentLang = locale === 'zh-TW' && !usingZhBody ? 'en' : undefined;
+---
+
+<Base locale={locale} title={item.title} description={item.summary} image={item.cover} type="article">
+  <article class="container-page max-w-3xl py-12 sm:py-16">
+    <a href={`${localePath('/', locale)}#${item.category}`} class="mb-8 inline-flex items-center gap-1 font-mono text-xs text-muted transition hover:text-accent">
+      <Icon name="chevron-left" size={14} />
+      {category?.title ?? t(locale, 'work.back')}
+    </a>
+
+    <header class="mb-10">
+      <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{item.title}</h1>
+      <p class="mt-4 text-lg leading-relaxed text-muted">{item.summary}</p>
+      <dl class="mt-6 grid gap-x-8 gap-y-3 border-y border-line py-4 text-sm sm:grid-cols-3">
+        <div>
+          <dt class="font-mono text-[11px] text-muted uppercase">{t(locale, 'work.period')}</dt>
+          <dd class="mt-0.5">{formatRange(item.date, item.endDate, locale, { current: item.ongoing })}</dd>
+        </div>
+        {
+          item.role && (
+            <div>
+              <dt class="font-mono text-[11px] text-muted uppercase">{t(locale, 'work.role')}</dt>
+              <dd class="mt-0.5">{item.role}</dd>
+            </div>
+          )
+        }
+        {
+          item.org && (
+            <div>
+              <dt class="font-mono text-[11px] text-muted uppercase">{category?.title}</dt>
+              <dd class="mt-0.5">{item.org}</dd>
+            </div>
+          )
+        }
+      </dl>
+      {
+        (item.tags.length > 0 || item.links.length > 0) && (
+          <div class="mt-5 flex flex-wrap items-center gap-2">
+            {item.tags.map((tag) => (
+              <span class="chip">{tag}</span>
+            ))}
+            {item.links.length > 0 && <span class="mx-1 h-4 w-px bg-line" />}
+            {item.links.map((l) => (
+              <a href={l.url} class="btn !py-1 !text-xs" target="_blank" rel="noopener">
+                {l.label}
+                <Icon name="arrow-up-right" size={12} />
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    {item.cover && <img src={item.cover} alt={item.coverAlt ?? item.title} class="mb-10 w-full rounded-xl border border-line" />}
+
+    <Prose locale={locale} lang={contentLang}>
+      <Content />
+    </Prose>
+
+    {
+      related.length > 0 && (
+        <section class="mt-14 border-t border-line pt-8">
+          <p class="eyebrow mb-5">{t(locale, 'work.related')}</p>
+          <div class="space-y-6">
+            {related.map((pub) => (
+              <PubItem pub={pub} locale={locale} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      (prev || next) && (
+        <nav class="mt-14 grid gap-4 border-t border-line pt-8 sm:grid-cols-2">
+          {prev ? (
+            <a href={localePath(`/work/${prev.id}/`, locale)} class="card card-hover p-4">
+              <p class="font-mono text-[11px] text-muted">← {t(locale, 'blog.prev')}</p>
+              <p class="mt-1 font-medium leading-snug">{prev.title}</p>
+            </a>
+          ) : (
+            <span />
+          )}
+          {next && (
+            <a href={localePath(`/work/${next.id}/`, locale)} class="card card-hover p-4 text-right">
+              <p class="font-mono text-[11px] text-muted">{t(locale, 'blog.next')} →</p>
+              <p class="mt-1 font-medium leading-snug">{next.title}</p>
+            </a>
+          )}
+        </nav>
+      )
+    }
+  </article>
+</Base>

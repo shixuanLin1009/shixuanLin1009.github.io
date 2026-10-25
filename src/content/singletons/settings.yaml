@@ -1,0 +1,13 @@
+en:
+  title: Shixuan Lin — AI Researcher
+  description: >-
+    Shixuan Lin is an AI researcher at National Cheng Kung University working on
+    deep reinforcement learning, vision-language-action models and embodied AI.
+  footer: There is no best, only better.
+  palette: petrol
+  analytics:
+    provider: none
+zh-TW:
+  title: 林世璿 — AI 研究員
+  description: 林世璿，成功大學 AI 研究員，研究深度強化學習、視覺-語言-動作模型與具身智慧。
+  footer: 沒有最好，只有更好。

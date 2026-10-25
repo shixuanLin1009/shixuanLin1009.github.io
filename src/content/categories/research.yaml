@@ -1,0 +1,12 @@
+en:
+  title: Research
+  description: Research projects on reinforcement learning, vision-language models and robotics.
+  resumeTitle: Research Projects
+  icon: flask
+  order: 1
+  layout: cards
+  showOnHome: true
+zh-TW:
+  title: 研究
+  description: 強化學習、視覺語言模型與機器人相關的研究專案。
+  resumeTitle: 研究專案

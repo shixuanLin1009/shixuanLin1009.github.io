@@ -1,9 +1,10 @@
-name: Deploy to GitHub Pages
+name: Deploy site
 
+# Every push to main — from `npm run publish`, the online CMS or a manual
+# commit — rebuilds the site *and* the two resume PDFs from the same content.
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -12,32 +13,39 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
         with:
-          fetch-depth: 0
+          node-version: 24
+          cache: npm
 
-      - uses: actions/setup-node@v4
+      - uses: typst-community/setup-typst@v5
         with:
-          node-version: 22
-          cache: "npm"
+          typst-version: '0.15.1'
+          cache-dependency-path: resume/template.typ
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Quartz
-        run: npx quartz build
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      # Noto Serif TC for the Chinese resume (downloaded + checksum-verified by scripts/fetch-fonts.ts)
+      - uses: actions/cache@v6
         with:
-          path: public
+          path: resume/fonts
+          key: resume-fonts-${{ hashFiles('scripts/fetch-fonts.ts') }}
+
+      - run: npm ci
+
+      # astro build → Typst PDFs from dist/cv/*.json → Pagefind index
+      - run: npm run build
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
 
   deploy:
     needs: build
@@ -46,6 +54,5 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - id: deployment
+        uses: actions/deploy-pages@v5

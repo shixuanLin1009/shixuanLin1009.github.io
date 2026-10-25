@@ -1,0 +1,30 @@
+items:
+  - platform: github
+    label: GitHub
+    url: https://github.com/shixuanLin1009
+    showInHero: true
+    showOnResume: true
+  - platform: email
+    label: Gmail
+    url: mailto:james920402@gmail.com
+    showInHero: true
+  - platform: email
+    label: NCKU Email
+    url: mailto:nm6144046@gs.ncku.edu.tw
+    showInHero: false
+  - platform: linkedin
+    label: LinkedIn
+    url: https://www.linkedin.com/
+    hidden: true
+  - platform: scholar
+    label: Google Scholar
+    url: https://scholar.google.com/
+    hidden: true
+  - platform: instagram
+    label: Instagram
+    url: https://www.instagram.com/
+    hidden: true
+  - platform: facebook
+    label: Facebook
+    url: https://www.facebook.com/
+    hidden: true

@@ -1,0 +1,11 @@
+en:
+  group: Languages
+  items:
+    - English — Professional proficiency (TOEIC 815)
+    - Mandarin Chinese — Native
+  order: 4
+zh-TW:
+  group: 語言
+  items:
+    - 英文 — 專業工作能力（多益 815）
+    - 中文 — 母語

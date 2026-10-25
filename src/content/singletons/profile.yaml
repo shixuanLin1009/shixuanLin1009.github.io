@@ -1,0 +1,58 @@
+en:
+  name: Shixuan Lin
+  headline: AI Researcher / Engineer
+  tagline: Embodied AI · Deep Reinforcement Learning · Vision-Language-Action
+  affiliation: M.S. student, Miin Wu School of Computing, National Cheng Kung University
+  bio: >-
+    I'm a master's student at National Cheng Kung University (NCKU) working on
+    **deep reinforcement learning**, **vision-language-action (VLA) models** and
+    **embodied AI**. I want robots and cameras to learn *how to see and how to move*
+    from experience — connecting perception to decision-making so that they work
+    reliably in the real world.
+  about: >-
+    My research started from a small everyday annoyance: empty cups and wrappers
+    left on my desk. I built RECOBOT, an NVIDIA JetBot that watches a falling
+    object and drives over to catch it, and quickly learned how brittle a
+    hand-tuned detect → filter → PID pipeline becomes under collisions, lighting
+    changes and fast motion. That question — can a robot learn to look and act on
+    its own? — led me to my master's research on active PTZ camera tracking with
+    deep reinforcement learning, and to a visiting summer at UC Berkeley's BAIR Lab.
+  resumeSummary: >-
+    AI researcher and master's student at National Cheng Kung University (NCKU)
+    specializing in Deep Reinforcement Learning, Vision-Language-Action (VLA) and
+    Embodied AI. First-author work on active visual tracking via DRL submitted to
+    ACCV 2026, and visiting research experience at UC Berkeley (BAIR Lab).
+    Proficient in PyTorch, Vision-Language Models (VLMs) and high-performance
+    simulation workflows. Seeking research internships in foundation models and
+    scalable robotic intelligence.
+  avatar: /uploads/avatar.webp
+  location: Tainan, Taiwan
+  email: james920402@gmail.com
+  motto: There is no best, only better.
+  interests:
+    - Deep Reinforcement Learning
+    - Vision-Language-Action Models
+    - Embodied AI & Robot Learning
+    - Active Visual Tracking
+    - Vision-Language Models
+  nameVariants:
+    - Shixuan Lin
+    - Shi-Xuan Lin
+    - S. Lin
+    - 林世璿
+zh-TW:
+  name: 林世璿
+  headline: AI 研究員／工程師
+  tagline: 具身智慧 · 深度強化學習 · 視覺-語言-動作模型
+  affiliation: 國立成功大學 敏求智慧運算學院 智慧科技系統碩士學程
+  bio: 我是林世璿，目前就讀成功大學敏求智慧運算學院碩士學程，研究**深度強化學習**、**視覺-語言-動作（VLA）模型**與**具身智慧**。我希望讓機器人與攝影機從經驗中學會「怎麼看、怎麼動」，把感知到決策真正串起來，並在真實世界中可靠運作。
+  about: 我的研究始於生活中的一個小觀察：座位上常出現喝完的飲料和垃圾。我在 NVIDIA JetBot 上做了一台能「看見」飛來的垃圾並移動去接住的機器人 RECOBOT，也第一次體會到「偵測＋濾波＋PID」這種靠人工調參的流程，遇到碰撞、光線干擾或目標快速移動時有多脆弱。「機器人能不能從經驗中自己學會怎麼看、怎麼動？」這個問題，帶我走進以深度強化學習實現主動式 PTZ 攝影機追蹤的碩士研究，也讓我有機會到加州大學柏克萊分校 BAIR 實驗室交流。
+  resumeSummary: 成功大學敏求智慧運算學院碩士生，專注於深度強化學習、視覺-語言-動作（VLA）模型與具身智慧。以第一作者身分將基於深度強化學習的主動式視覺追蹤研究投稿至 ACCV 2026，並曾赴加州大學柏克萊分校 BAIR 實驗室交流。熟悉 PyTorch、視覺語言模型（VLM）與高效能模擬訓練流程。
+  location: 台灣 台南
+  motto: 沒有最好，只有更好
+  interests:
+    - 深度強化學習
+    - 視覺-語言-動作模型
+    - 具身智慧與機器人學習
+    - 主動式視覺追蹤
+    - 視覺語言模型

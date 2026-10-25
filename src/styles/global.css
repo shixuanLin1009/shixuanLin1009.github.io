@@ -1,0 +1,277 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+@theme {
+  --font-sans: 'Inter Variable', 'Noto Sans TC Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-soft: var(--accent-soft);
+}
+
+:root {
+  --bg: #fafbfd;
+  --surface: #ffffff;
+  --fg: #0f172a;
+  --muted: #5b6478;
+  --line: #e3e7ef;
+  --accent: #0e7490;
+  --accent-2: #0284c7;
+  --accent-soft: rgb(14 116 144 / 0.09);
+  --grid: rgb(15 23 42 / 0.045);
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg: #090c13;
+  --surface: #10141f;
+  --fg: #e5e8f0;
+  --muted: #8d95aa;
+  --line: #1e2433;
+  --accent: #22d3ee;
+  --accent-2: #38bdf8;
+  --accent-soft: rgb(34 211 238 / 0.1);
+  --grid: rgb(229 232 240 / 0.04);
+  color-scheme: dark;
+}
+
+/* ---------- Accent palettes (Settings → palette). Ocean is the :root default above. ---------- */
+/* Ocean family */
+[data-palette='lagoon'] {
+  --accent: #0f766e;
+  --accent-2: #0891b2;
+  --accent-soft: rgb(15 118 110 / 0.09);
+}
+[data-palette='lagoon'][data-theme='dark'] {
+  --accent: #2dd4bf;
+  --accent-2: #22d3ee;
+  --accent-soft: rgb(45 212 191 / 0.1);
+}
+[data-palette='petrol'] {
+  --accent: #155e75;
+  --accent-2: #475569;
+  --accent-soft: rgb(21 94 117 / 0.08);
+}
+[data-palette='petrol'][data-theme='dark'] {
+  --accent: #67c6dc;
+  --accent-2: #94a3b8;
+  --accent-soft: rgb(103 198 220 / 0.1);
+}
+/* Graphite family */
+[data-palette='graphite'] {
+  --accent: #18181b;
+  --accent-2: #f97316;
+  --accent-soft: rgb(24 24 27 / 0.06);
+}
+[data-palette='graphite'][data-theme='dark'] {
+  --accent: #f4f4f5;
+  --accent-2: #fb923c;
+  --accent-soft: rgb(244 244 245 / 0.08);
+}
+[data-palette='graphite-teal'] {
+  --accent: #18181b;
+  --accent-2: #0891b2;
+  --accent-soft: rgb(24 24 27 / 0.06);
+}
+[data-palette='graphite-teal'][data-theme='dark'] {
+  --accent: #f4f4f5;
+  --accent-2: #22d3ee;
+  --accent-soft: rgb(244 244 245 / 0.08);
+}
+[data-palette='slate'] {
+  --accent: #334155;
+  --accent-2: #0ea5e9;
+  --accent-soft: rgb(51 65 85 / 0.07);
+}
+[data-palette='slate'][data-theme='dark'] {
+  --accent: #cbd5e1;
+  --accent-2: #38bdf8;
+  --accent-soft: rgb(203 213 225 / 0.09);
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply font-sans;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 25%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-5xl px-4 sm:px-6;
+  }
+  .gradient-text {
+    background: linear-gradient(100deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .grid-bg {
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .card {
+    @apply rounded-xl border border-line bg-surface transition;
+  }
+  .card-hover {
+    @apply hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-[0_8px_30px_-12px_var(--accent)];
+  }
+  .chip {
+    @apply inline-flex items-center rounded-md border border-line px-1.5 py-0.5 font-mono text-[11px] leading-4 text-muted;
+  }
+  .btn {
+    @apply inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-sm font-medium text-fg transition hover:border-accent hover:text-accent;
+  }
+  .btn-primary {
+    @apply inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-white transition hover:opacity-90;
+  }
+  [data-theme='dark'] .btn-primary {
+    @apply text-[#0b0e16];
+  }
+  .eyebrow {
+    @apply font-mono text-xs tracking-wider text-accent uppercase;
+  }
+  .link {
+    @apply text-accent underline decoration-accent/30 underline-offset-4 transition hover:decoration-accent;
+  }
+}
+
+/* ---------- Long-form content (blog posts, project pages) ---------- */
+.prose-site {
+  @apply prose max-w-none;
+  --tw-prose-body: var(--fg);
+  --tw-prose-headings: var(--fg);
+  --tw-prose-lead: var(--muted);
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: var(--fg);
+  --tw-prose-counters: var(--muted);
+  --tw-prose-bullets: var(--muted);
+  --tw-prose-hr: var(--line);
+  --tw-prose-quotes: var(--fg);
+  --tw-prose-quote-borders: var(--accent);
+  --tw-prose-captions: var(--muted);
+  --tw-prose-code: var(--fg);
+  --tw-prose-pre-code: inherit;
+  --tw-prose-pre-bg: var(--surface);
+  --tw-prose-th-borders: var(--line);
+  --tw-prose-td-borders: var(--line);
+  line-height: 1.85;
+}
+.prose-site :where(h2, h3, h4) {
+  scroll-margin-top: 5rem;
+  letter-spacing: -0.01em;
+}
+.prose-site .heading-anchor {
+  @apply ml-2 font-mono text-[0.8em] text-muted no-underline opacity-0 transition;
+}
+.prose-site :where(h2, h3, h4):hover .heading-anchor {
+  @apply opacity-100;
+}
+.prose-site :where(code):not(:where(pre code)) {
+  @apply rounded bg-accent-soft px-1.5 py-0.5 font-mono text-[0.85em] font-normal;
+}
+.prose-site :where(code):not(:where(pre code))::before,
+.prose-site :where(code):not(:where(pre code))::after {
+  content: none;
+}
+.prose-site pre {
+  @apply relative rounded-xl border border-line text-[0.85rem] leading-relaxed;
+}
+.prose-site mark {
+  background: color-mix(in oklab, #facc15 45%, transparent);
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+.prose-site img,
+.prose-site video {
+  @apply mx-auto rounded-lg;
+}
+.prose-site table {
+  @apply block overflow-x-auto;
+}
+.prose-site .embed {
+  @apply my-8;
+}
+.prose-site .embed-frame {
+  @apply relative overflow-hidden rounded-xl border border-line bg-black;
+  aspect-ratio: 16 / 9;
+}
+.prose-site .embed-frame iframe {
+  @apply absolute inset-0 h-full w-full;
+}
+.prose-site .embed video {
+  @apply w-full rounded-xl border border-line bg-black;
+}
+.prose-site .embed figcaption {
+  @apply text-center;
+}
+.prose-site .katex-display {
+  @apply overflow-x-auto overflow-y-hidden py-1;
+}
+.prose-site pre.mermaid,
+.prose-site .mermaid {
+  @apply flex justify-center border-0 bg-transparent;
+}
+
+/* Shiki dual themes (defaultColor: false) */
+.astro-code,
+.astro-code span {
+  color: var(--shiki-light);
+}
+.astro-code {
+  background-color: var(--shiki-light-bg) !important;
+}
+[data-theme='dark'] .astro-code,
+[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark);
+}
+[data-theme='dark'] .astro-code {
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+.copy-code {
+  @apply absolute top-2 right-2 rounded-md border border-line bg-surface px-2 py-0.5 font-mono text-[11px] text-muted opacity-0 transition hover:text-accent;
+}
+pre:hover .copy-code,
+.copy-code:focus-visible {
+  @apply opacity-100;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

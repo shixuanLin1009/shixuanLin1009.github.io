@@ -1,0 +1,20 @@
+title: "SARC-PTZ: Active Visual Tracking via Deep Reinforcement Learning"
+authors:
+  - Shixuan Lin
+  - et al.
+venue: Asian Conference on Computer Vision
+venueShort: ACCV
+year: 2026
+status: submitted
+type: conference
+note: First author
+abstract: >-
+  We formulate active Pan-Tilt-Zoom (PTZ) camera tracking as an end-to-end deep
+  reinforcement learning control problem that maps stacked RGB observations
+  directly to discrete camera actions. A Scale-Anchored Reward with Centering
+  (SARC) resolves the risk-averse "zoom-out" failure mode of product-style
+  rewards, raising the tracking success rate from 32% to 82% in the EagleSim
+  simulator without an explicit detector at inference.
+showcase: sarc-ptz
+selected: true
+showOnResume: false

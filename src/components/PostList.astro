@@ -1,0 +1,53 @@
+---
+import { categoryLabel, tagSlug } from '../lib/blog';
+import { readingMinutes, type Post } from '../lib/content';
+import { formatDay, isoDay, localePath, t, type Locale } from '../lib/i18n';
+
+interface Props {
+  posts: Post[];
+  locale: Locale;
+}
+const { posts, locale } = Astro.props;
+---
+
+{
+  posts.length === 0 ? (
+    <p class="py-10 text-center text-muted">{t(locale, 'blog.empty')}</p>
+  ) : (
+    <ul class="divide-y divide-line">
+      {posts.map((post) => (
+        <li class="post-row py-6" data-category={post.data.category}>
+          <article class="grid gap-2 sm:grid-cols-[8.5rem_1fr] sm:gap-6">
+            <div class="font-mono text-xs text-muted sm:pt-1">
+              <time datetime={isoDay(post.data.date)}>{formatDay(post.data.date, locale)}</time>
+            </div>
+            <div>
+              <div class="mb-1.5 flex flex-wrap items-center gap-2 font-mono text-[11px]">
+                <span class="text-accent">{categoryLabel(post.data.category, locale)}</span>
+                <span class="text-muted">·</span>
+                <span class="text-muted">{t(locale, 'blog.minRead', { n: readingMinutes(post.body) })}</span>
+                <span class="chip !py-0">{post.data.lang === 'en' ? t(locale, 'blog.langEn') : t(locale, 'blog.langZh')}</span>
+                {post.data.draft && <span class="chip !border-amber-500/60 !py-0 !text-amber-600">draft</span>}
+              </div>
+              <h2 class="text-lg font-semibold leading-snug tracking-tight" lang={post.data.lang === 'en' ? 'en' : 'zh-Hant-TW'}>
+                <a href={`/blog/${post.id}/`} class="transition hover:text-accent">
+                  {post.data.title}
+                </a>
+              </h2>
+              {post.data.description && <p class="mt-1.5 text-sm leading-relaxed text-muted">{post.data.description}</p>}
+              {post.data.tags.length > 0 && (
+                <div class="mt-3 flex flex-wrap gap-1.5">
+                  {post.data.tags.map((tag) => (
+                    <a href={localePath(`/blog/tags/${tagSlug(tag)}/`, locale)} class="chip transition hover:border-accent hover:text-accent">
+                      #{tag}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </article>
+        </li>
+      ))}
+    </ul>
+  )
+}

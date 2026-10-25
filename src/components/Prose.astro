@@ -1,0 +1,54 @@
+---
+import 'katex/dist/katex.min.css';
+import 'rehype-callouts/theme/obsidian';
+import { t, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+  lang?: string;
+  class?: string;
+}
+const { locale, lang, class: className = '' } = Astro.props;
+---
+
+<div class:list={['prose-site', className]} lang={lang} data-copy={t(locale, 'code.copy')} data-copied={t(locale, 'code.copied')}>
+  <slot />
+</div>
+
+<script>
+  // Copy buttons on code blocks.
+  for (const prose of document.querySelectorAll<HTMLElement>('.prose-site')) {
+    for (const pre of prose.querySelectorAll('pre.astro-code')) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'copy-code';
+      button.textContent = prose.dataset.copy ?? 'Copy';
+      button.addEventListener('click', async () => {
+        await navigator.clipboard.writeText(pre.querySelector('code')?.innerText ?? '');
+        button.textContent = prose.dataset.copied ?? 'Copied';
+        setTimeout(() => (button.textContent = prose.dataset.copy ?? 'Copy'), 1500);
+      });
+      pre.append(button);
+    }
+  }
+
+  // Mermaid diagrams are rendered client-side, only on pages that contain one.
+  const diagrams = [...document.querySelectorAll<HTMLElement>('.prose-site pre > code.language-mermaid')].map(
+    (code) => code.parentElement!,
+  );
+  if (diagrams.length) {
+    const { default: mermaid } = await import('mermaid');
+    const render = async () => {
+      mermaid.initialize({ startOnLoad: false, theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default' });
+      for (const [i, pre] of diagrams.entries()) {
+        const source = pre.dataset.source ?? pre.textContent ?? '';
+        pre.dataset.source = source;
+        const { svg } = await mermaid.render(`mermaid-${i}-${Date.now()}`, source);
+        pre.innerHTML = svg;
+        pre.classList.add('mermaid');
+      }
+    };
+    await render();
+    document.addEventListener('themechange', render);
+  }
+</script>

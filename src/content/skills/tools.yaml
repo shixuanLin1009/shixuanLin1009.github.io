@@ -1,0 +1,14 @@
+en:
+  group: Tools & Platforms
+  items:
+    - Git/GitHub
+    - Linux
+    - Unreal Engine 4
+    - NVIDIA Jetson
+    - AWS SageMaker
+    - Google Cloud
+    - MySQL
+    - Firebase
+  order: 3
+zh-TW:
+  group: 工具與平台
