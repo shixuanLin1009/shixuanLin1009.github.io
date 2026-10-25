@@ -67,7 +67,10 @@ export async function loadConfig(): Promise<StudioConfig> {
   const base = JSON.parse(await readFile(path.join(root, 'studio.config.json'), 'utf8'));
   const localFile = path.join(root, 'studio.config.local.json');
   const local = existsSync(localFile) ? JSON.parse(await readFile(localFile, 'utf8')) : {};
-  return { exclude: [], ...base, ...local };
+  const config: StudioConfig = { exclude: [], ...base, ...local };
+  // GitHub Actions checks the vault out somewhere else (.github/workflows/obsidian-sync.yml).
+  if (process.env.VAULT_PATH) config.vaultPath = path.resolve(process.env.VAULT_PATH);
+  return config;
 }
 
 type VaultIndex = { files: string[]; byName: Map<string, string[]> };
@@ -195,7 +198,7 @@ function canonicalHash(fileText: string): string {
 // existing site posts
 // ---------------------------------------------------------------------------
 
-type SitePost = { slug: string; source?: string; storedHash?: string; currentHash: string; title: string };
+type SitePost = { slug: string; source?: string; storedHash?: string; currentHash: string; title: string; date?: string };
 
 async function readSitePosts(): Promise<SitePost[]> {
   if (!existsSync(blogDir)) return [];
@@ -211,6 +214,7 @@ async function readSitePosts(): Promise<SitePost[]> {
       storedHash: data.obsidian?.hash,
       currentHash: canonicalHash(text),
       title: String(data.title ?? entry.name),
+      date: data.date ? toDay(data.date, new Date()) : undefined,
     });
   }
   return posts;
@@ -354,7 +358,11 @@ async function planNote(
   const category = CATEGORY_ALIASES[rawCategory] ?? rawCategory.toLowerCase();
   const cjk = (body.match(/[㐀-鿿]/g) ?? []).length;
   const lang = fm.lang === 'en' || fm.lang === 'zh-TW' ? fm.lang : cjk > body.length * 0.05 ? 'zh-TW' : 'en';
-  const date = toDay(fm.date ?? fm.created, info.birthtime ?? info.mtime);
+  // Without a `date:` in the note, keep the date the post was first published with:
+  // file times are meaningless in a fresh clone (the cloud sync), so they are only
+  // used the very first time a note is published.
+  const date =
+    fm.date || fm.created ? toDay(fm.date ?? fm.created, info.mtime) : (existing?.date ?? toDay(undefined, info.birthtime ?? info.mtime));
 
   const frontmatter: Record<string, unknown> = {
     title,

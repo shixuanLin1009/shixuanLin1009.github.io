@@ -20,6 +20,9 @@ studio.config.local.json
 # local tooling
 .claude/
 
+# Obsidian vault checked out by .github/workflows/obsidian-sync.yml (never committed)
+.vault/
+
 # logs / OS
 npm-debug.log*
 .DS_Store

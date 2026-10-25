@@ -43,6 +43,22 @@ npm run dev
 
 只用命令列也可以：`npm run sync`（加上 `-- --dry-run` 只預覽不寫入），然後 `npm run publish`。
 
+#### 雲端發佈（不用這台電腦）
+
+在其他電腦用 Obsidian 寫的筆記，會由 obsidian-git 推上 GitHub 的私人 vault repo。workflow `Sync from Obsidian` 會在 GitHub 上讀取 vault，執行和 Studio 相同的同步；有變更時，會自動 commit 並重新部署網站。
+
+- **立刻發佈**：GitHub 網頁或手機 App → 這個 repo → Actions →「Sync from Obsidian」→ Run workflow。
+- **自動發佈**：每小時整點過 17 分自動檢查一次，沒有變更就不會部署。
+- 寫完後要等 obsidian-git 推送（每 10 分鐘一次），或在 Obsidian 執行「Git: Commit-and-sync」立刻推送。
+
+**一次性設定**：建立 `VAULT_TOKEN`。
+
+1. GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token。
+2. Repository access 選 **Only select repositories → `-ObsidianVault`**；Permissions 的 **Contents 設為 Read-only**。
+3. 到這個網站 repo → Settings → Secrets and variables → Actions → New repository secret，名稱填 `VAULT_TOKEN`，貼上 token。
+
+沒有設定 `VAULT_TOKEN` 時，這個 workflow 什麼都不會做。vault 只會在 GitHub 的執行環境裡暫時讀取，不會被 commit 或部署。另外，公開 repo 如果 60 天沒有任何活動，GitHub 會暫停排程，到 Actions 頁面重新啟用即可。
+
 ### 3. 用手機或其他電腦更新（線上後台）
 
 1. 到 GitHub → Settings → Developer settings → Fine-grained tokens 建立 token。

@@ -1,0 +1,83 @@
+name: Sync from Obsidian
+
+# Publish blog posts straight from the Obsidian vault on GitHub — no local
+# machine needed. Notes with `publish: true` in shixuanLin1009/-ObsidianVault
+# are converted by scripts/obsidian-sync.ts (the same code Studio uses); if
+# anything changed, the posts are committed here and the site is redeployed.
+#
+# Run it any time: Actions → "Sync from Obsidian" → Run workflow
+# (also works from the GitHub mobile app). It also runs once an hour.
+#
+# Setup (once): add a repository secret VAULT_TOKEN — a fine-grained token
+# with read-only "Contents" access to the vault repo. Without it this
+# workflow does nothing.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+
+permissions:
+  contents: write # commit synced posts
+  actions: write # start the deploy workflow
+
+concurrency:
+  group: obsidian-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      HAS_VAULT_TOKEN: ${{ secrets.VAULT_TOKEN != '' }}
+    steps:
+      - name: Check setup
+        if: env.HAS_VAULT_TOKEN != 'true'
+        run: echo "::notice::VAULT_TOKEN secret is not set — skipping. See README → 雲端發佈."
+
+      - uses: actions/checkout@v7
+        if: env.HAS_VAULT_TOKEN == 'true'
+
+      # The private vault is only read on the runner. It lives in .vault/, which
+      # is git-ignored and never staged, uploaded or deployed.
+      - name: Check out Obsidian vault
+        if: env.HAS_VAULT_TOKEN == 'true'
+        uses: actions/checkout@v7
+        with:
+          repository: shixuanLin1009/-ObsidianVault
+          token: ${{ secrets.VAULT_TOKEN }}
+          path: .vault
+          fetch-depth: 1
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        if: env.HAS_VAULT_TOKEN == 'true'
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+        if: env.HAS_VAULT_TOKEN == 'true'
+
+      - name: Sync notes
+        if: env.HAS_VAULT_TOKEN == 'true'
+        env:
+          VAULT_PATH: ${{ github.workspace }}/.vault
+        run: npm run sync
+
+      - name: Commit and deploy if anything changed
+        if: env.HAS_VAULT_TOKEN == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add src/content/blog public/uploads
+          if git diff --cached --quiet; then
+            echo "No changes in published notes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "blog: sync from Obsidian (cloud)"
+          git pull --rebase
+          git push
+          # Pushes made with GITHUB_TOKEN don't trigger other workflows; a manual dispatch does.
+          gh workflow run deploy.yml --ref main
