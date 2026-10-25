@@ -27,10 +27,12 @@ jobs:
           node-version: 24
           cache: npm
 
-      - uses: typst-community/setup-typst@v5
-        with:
-          typst-version: '0.15.1'
-          cache-dependency-path: resume/template.typ
+      # Typst for the resume PDFs, pinned to the same version used locally.
+      - name: Install Typst 0.15.1
+        run: |
+          curl -fsSL https://github.com/typst/typst/releases/download/v0.15.1/typst-x86_64-unknown-linux-musl.tar.xz | tar -xJ
+          sudo install typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
+          typst --version
 
       # Noto Serif TC for the Chinese resume (downloaded + checksum-verified by scripts/fetch-fonts.ts)
       - uses: actions/cache@v6
