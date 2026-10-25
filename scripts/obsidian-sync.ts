@@ -14,6 +14,8 @@
  *   npm run sync                 # sync new and changed notes
  *   npm run sync -- --dry-run    # only show what would happen
  *   npm run sync -- --force      # also overwrite posts edited on the site
+ *   npm run sync -- --prune      # also unpublish posts whose note was deleted or
+ *                                # lost `publish: true` (the cloud sync uses this)
  */
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
@@ -387,7 +389,7 @@ async function planNote(
     const editedOnSite = existing.storedHash !== undefined && existing.currentHash !== existing.storedHash;
     const assetsMissing = assets.some((a) => !existsSync(a.to));
     if (editedOnSite) status = 'conflict';
-    else if (existing.storedHash === hash && existing.slug === slug && !assetsMissing) status = 'synced';
+    else if (existing.storedHash === hash && existing.slug === slug && existing.source === source && !assetsMissing) status = 'synced';
     else status = 'changed';
     if (editedOnSite) warnings.push('這篇文章在網站端（CMS）被修改過；同步會覆蓋那些修改。');
   }
@@ -412,23 +414,37 @@ async function buildPlans(): Promise<{ vault: string; plans: Plan[]; removed: Re
   const vault = config.vaultPath;
   if (!existsSync(vault)) throw new Error(`Obsidian vault not found: ${vault} (edit studio.config.json)`);
   const index = await indexVault(vault, config.exclude);
+  const noteFiles = index.files.filter((f) => f.endsWith('.md'));
+  // An empty vault almost certainly means a broken checkout, not "unpublish everything".
+  if (noteFiles.length === 0) throw new Error(`No notes found in ${vault} — refusing to sync (incomplete vault checkout?)`);
   const sitePosts = await readSitePosts();
   const bySource = new Map(sitePosts.filter((p) => p.source).map((p) => [p.source!, p]));
 
   // 1. Which notes are published, and under which slug.
+  const publishable: { rel: string; data: Record<string, unknown> }[] = [];
+  for (const rel of noteFiles) {
+    const { data } = matter((await readFile(path.join(vault, rel), 'utf8')).replace(/\r\n?/g, '\n'));
+    if (isTrue(data.publish)) publishable.push({ rel, data });
+  }
+  const publishableSet = new Set(publishable.map((p) => p.rel));
+
   const published = new Map<string, string>();
   const errors = new Map<string, string>();
   const used = new Map<string, string>();
-  for (const rel of index.files.filter((f) => f.endsWith('.md'))) {
-    const { data } = matter((await readFile(path.join(vault, rel), 'utf8')).replace(/\r\n?/g, '\n'));
-    if (!isTrue(data.publish)) continue;
+  // A renamed/moved note takes over the post of its old path, so its URL survives.
+  const adopted = new Map<string, SitePost>();
+  for (const { rel, data } of publishable) {
     const title = String(data.title ?? path.posix.basename(rel, '.md'));
     const slug = data.slug ? suggestSlug(String(data.slug)) : (bySource.get(rel)?.slug ?? suggestSlug(title));
     const owner = sitePosts.find((p) => p.slug === slug);
+    const orphan = owner?.source !== undefined && !publishableSet.has(owner.source) && !bySource.has(rel);
     if (used.has(slug)) errors.set(rel, `slug「${slug}」和「${used.get(slug)}」重複，請在 frontmatter 加上不同的 slug:`);
     else if (owner && owner.source !== rel) {
-      const who = owner.source ? `「${owner.source}」` : '網站上另一篇文章';
-      errors.set(rel, `slug「${slug}」已被${who}使用，請在 frontmatter 加上不同的 slug:`);
+      if (orphan) adopted.set(rel, owner);
+      else {
+        const who = owner.source ? `「${owner.source}」` : '網站上另一篇文章';
+        errors.set(rel, `slug「${slug}」已被${who}使用，請在 frontmatter 加上不同的 slug:`);
+      }
     }
     used.set(slug, rel);
     published.set(rel, slug);
@@ -441,12 +457,13 @@ async function buildPlans(): Promise<{ vault: string; plans: Plan[]; removed: Re
       plans.push({ source: rel, title: path.posix.basename(rel, '.md'), slug, date: '', category: '', status: 'error', warnings: [errors.get(rel)!], content: '', hash: '', assets: [] });
       continue;
     }
-    plans.push(await planNote(vault, index, rel, published, bySource.get(rel)));
+    plans.push(await planNote(vault, index, rel, published, bySource.get(rel) ?? adopted.get(rel)));
   }
 
-  // 3. Posts whose note was deleted or unpublished.
+  // 3. Posts whose note was deleted or unpublished (and not taken over by a renamed note).
+  const adoptedSlugs = new Set([...adopted.values()].map((p) => p.slug));
   const removed = sitePosts
-    .filter((p) => p.source && !published.has(p.source))
+    .filter((p) => p.source && !published.has(p.source) && !adoptedSlugs.has(p.slug))
     .map((p) => ({ slug: p.slug, source: p.source!, title: p.title }));
 
   plans.sort((a, b) => b.date.localeCompare(a.date));
@@ -481,9 +498,10 @@ async function writePlan(plan: Plan) {
   if (plan.previousSlug) await rm(path.join(blogDir, plan.previousSlug), { recursive: true, force: true });
 }
 
-export async function syncNotes(opts: { sources?: string[]; force?: boolean } = {}) {
-  const { plans } = await buildPlans();
+export async function syncNotes(opts: { sources?: string[]; force?: boolean; prune?: boolean } = {}) {
+  const { plans, removed } = await buildPlans();
   const written: string[] = [];
+  const pruned: string[] = [];
   const skipped: { source: string; reason: string }[] = [];
   for (const plan of plans) {
     if (opts.sources && !opts.sources.includes(plan.source)) continue;
@@ -499,11 +517,19 @@ export async function syncNotes(opts: { sources?: string[]; force?: boolean } = 
     await writePlan(plan);
     written.push(plan.slug);
   }
-  return { written, skipped };
+  // Unpublish posts whose note was deleted or lost `publish: true` (cloud sync).
+  if (opts.prune && !opts.sources) {
+    for (const post of removed) {
+      await removePost(post.slug);
+      pruned.push(post.slug);
+    }
+  }
+  return { written, skipped, pruned };
 }
 
 export async function removePost(slug: string) {
-  if (!/^[a-z0-9-]+$/.test(slug)) throw new Error(`Invalid slug: ${slug}`);
+  // Only ever a direct child of the blog folder.
+  if (!slug || slug.startsWith('.') || /[\\/]/.test(slug)) throw new Error(`Invalid slug: ${slug}`);
   await rm(path.join(blogDir, slug), { recursive: true, force: true });
   await rm(path.join(filesDir, slug), { recursive: true, force: true });
   if (existsSync(videoDir)) {
@@ -524,11 +550,14 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     console.log(`${icons[n.status]} [${n.status}] ${n.title}  →  /blog/${n.slug}/`);
     for (const w of n.warnings) console.log(`    ⚠ ${w}`);
   }
-  for (const r of scan.removed) console.log(`− [removed] ${r.title}  (/blog/${r.slug}/ — note gone or unpublished; delete it in Studio)`);
+  const prune = args.includes('--prune');
+  for (const r of scan.removed) {
+    console.log(`− [removed] ${r.title}  (/blog/${r.slug}/ — note gone or unpublished; ${prune ? 'will be unpublished' : 'run with --prune or delete it in Studio'})`);
+  }
   if (!scan.notes.length) console.log('No notes with `publish: true` found.');
   if (!args.includes('--dry-run')) {
-    const { written, skipped } = await syncNotes({ force: args.includes('--force') });
-    console.log(`\nSynced ${written.length} post(s).`);
+    const { written, skipped, pruned } = await syncNotes({ force: args.includes('--force'), prune });
+    console.log(`\nSynced ${written.length} post(s).${prune ? ` Unpublished ${pruned.length}.` : ''}`);
     for (const s of skipped) console.log(`  skipped ${s.source}: ${s.reason}`);
   }
 }

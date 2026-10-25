@@ -49,6 +49,8 @@ npm run dev
 
 - **立刻發佈**：GitHub 網頁或手機 App → 這個 repo → Actions →「Sync from Obsidian」→ Run workflow。
 - **自動發佈**：每小時整點過 17 分自動檢查一次，沒有變更就不會部署。
+- **下架**：把筆記刪除或改成 `publish: false`，下一次雲端同步就會把文章從網站移除。如果 vault 讀取失敗（例如是空的），同步會直接停止，不會誤刪文章。
+- **改檔名或搬資料夾**：文章會沿用原本的網址。
 - 寫完後要等 obsidian-git 推送（每 10 分鐘一次），或在 Obsidian 執行「Git: Commit-and-sync」立刻推送。
 
 **一次性設定**：建立 `VAULT_TOKEN`。
@@ -94,7 +96,7 @@ npm run dev
 | `npm run dev` | 本機開發（網站、後台、Studio） |
 | `npm run build` | 完整建置：網站 → PDF → 搜尋索引（CI 也是跑這個） |
 | `npm run preview` | 預覽 `dist/`（搜尋功能只在這裡和線上可用） |
-| `npm run sync` | Obsidian 同步（`-- --dry-run`、`-- --force`） |
+| `npm run sync` | Obsidian 同步（`-- --dry-run` 只預覽、`-- --force` 覆蓋網站端修改、`-- --prune` 一併下架已取消發佈的文章） |
 | `npm run resume` | 從執行中的 dev server 產生 PDF 到 `public/cv/`（`-- --private` 會加上電話） |
 | `npm run publish` | commit 並 push 所有變更（`-- -m "訊息"`） |
 | `npm run check` | 型別檢查 |

@@ -2,8 +2,9 @@ name: Sync from Obsidian
 
 # Publish blog posts straight from the Obsidian vault on GitHub — no local
 # machine needed. Notes with `publish: true` in shixuanLin1009/-ObsidianVault
-# are converted by scripts/obsidian-sync.ts (the same code Studio uses); if
-# anything changed, the posts are committed here and the site is redeployed.
+# are converted by scripts/obsidian-sync.ts (the same code Studio uses); posts
+# whose note was deleted or unpublished are removed. If anything changed, the
+# posts are committed here and the site is redeployed.
 #
 # Run it any time: Actions → "Sync from Obsidian" → Run workflow
 # (also works from the GitHub mobile app). It also runs once an hour.
@@ -58,11 +59,13 @@ jobs:
       - run: npm ci
         if: env.HAS_VAULT_TOKEN == 'true'
 
+      # --prune: posts whose note was deleted or lost `publish: true` are removed too.
+      # (The sync refuses to run against an empty vault, so a broken checkout can't wipe the blog.)
       - name: Sync notes
         if: env.HAS_VAULT_TOKEN == 'true'
         env:
           VAULT_PATH: ${{ github.workspace }}/.vault
-        run: npm run sync
+        run: npm run sync -- --prune
 
       - name: Commit and deploy if anything changed
         if: env.HAS_VAULT_TOKEN == 'true'
