@@ -9,6 +9,8 @@ en:
     - Google Cloud
     - MySQL
     - Firebase
+    - Issaclab
   order: 3
 zh-TW:
   group: 工具與平台
+  order: 3
