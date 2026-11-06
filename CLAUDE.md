@@ -63,4 +63,4 @@ Schema 在 `src/schemas.ts`，collection 定義在 `src/content.config.ts`。資
 - 中文使用系統字型，**不要加入中文網頁字型**（每頁會多 1–2MB，Lighthouse 效能會掉到 50 分以下）。
 - Astro 7 的編譯器比較嚴格，例如 `<div>` 放在 `<p>` 裡會直接 build 失敗。
 - commit 訊息用英文、簡短描述改了什麼。不要 commit `dist/`、`.env*`、`resume/private/`、`resume/fonts/`。
-- 完整使用說明在 `README.md`（中文）。
+- 完整使用說明在 `docs/README.md`（中文，給網站擁有者看）。根目錄的 `README.md` 是給外部訪客的英文介紹。
