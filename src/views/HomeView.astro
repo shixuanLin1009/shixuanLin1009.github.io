@@ -51,7 +51,7 @@ const nextIndex = () => String(++n).padStart(2, '0');
   <section class="grid-bg relative overflow-hidden border-b border-line">
     <NeuralCanvas class="opacity-60 [mask-image:linear-gradient(to_right,transparent,black_45%)] md:opacity-100" />
     <div class="container-page relative grid items-center gap-10 py-16 sm:py-24 md:grid-cols-[1fr_auto]">
-      <div class="max-w-2xl">
+      <div class="max-w-2xl" data-neural-avoid>
         <p class="eyebrow mb-4 flex items-center gap-2">
           <span class="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-accent-2"></span>
           {profile.affiliation}
@@ -84,7 +84,7 @@ const nextIndex = () => String(++n).padStart(2, '0');
       </div>
       {
         profile.avatar && (
-          <div class="relative mx-auto hidden md:block">
+          <div class="relative mx-auto hidden md:block" data-neural-center>
             <div class="absolute -inset-1.5 rounded-full bg-gradient-to-br from-accent to-accent-2 opacity-70 blur-md" />
             <img
               src={profile.avatar}

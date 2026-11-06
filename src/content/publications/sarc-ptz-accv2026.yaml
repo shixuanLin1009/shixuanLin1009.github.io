@@ -5,9 +5,9 @@ authors:
 venue: Asian Conference on Computer Vision
 venueShort: ACCV
 year: 2026
-status: submitted
+status: withdrawn
 type: conference
-note: First author
+note: First author; withdrawn by the authors for revision before resubmission
 abstract: >-
   We formulate active Pan-Tilt-Zoom (PTZ) camera tracking as an end-to-end deep
   reinforcement learning control problem that maps stacked RGB observations

@@ -81,6 +81,23 @@ const contentLang = locale === 'zh-TW' && !usingZhBody ? 'en' : undefined;
     </Prose>
 
     {
+      item.certificate && (
+        <section class="mt-14 border-t border-line pt-8">
+          <p class="eyebrow mb-5">{t(locale, 'work.certificate')}</p>
+          <a href={item.certificate.file ?? item.certificate.image} target="_blank" rel="noopener" class="block max-w-md">
+            <img src={item.certificate.image} alt={`${t(locale, 'work.certificate')}: ${item.title}`} loading="lazy" class="w-full rounded-lg border border-line" />
+          </a>
+          {item.certificate.file && (
+            <a href={item.certificate.file} class="btn mt-4 !py-1 !text-xs" target="_blank" rel="noopener">
+              <Icon name="pdf" size={12} />
+              {t(locale, 'work.openPdf')}
+            </a>
+          )}
+        </section>
+      )
+    }
+
+    {
       related.length > 0 && (
         <section class="mt-14 border-t border-line pt-8">
           <p class="eyebrow mb-5">{t(locale, 'work.related')}</p>

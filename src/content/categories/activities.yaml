@@ -1,0 +1,12 @@
+en:
+  title: Leadership & Activities
+  description: Student leadership, communities and programs outside the classroom.
+  resumeTitle: Leadership & Activities
+  icon: users
+  order: 5
+  layout: list
+  showOnHome: true
+zh-TW:
+  title: 領導與活動
+  description: 學生幹部、社群與課外計畫。
+  resumeTitle: 領導與活動

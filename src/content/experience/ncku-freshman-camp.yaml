@@ -8,6 +8,9 @@ en:
   bullets:
     - Co-led a 300-person organizing team over six months to plan a three-day program of talks, exhibitions and workshops for 3,000 incoming students.
     - When Typhoon Haikui struck days before the event, condensed the three-day program into one day within five days while coordinating closely with the university to keep every participant safe.
+  certificate:
+    image: /uploads/showcase/certificates/freshman-camp-2023.webp
+    file: /uploads/showcase/certificates/freshman-camp-2023.pdf
   showOnResume: false
   order: 4
 zh-TW:

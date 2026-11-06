@@ -21,7 +21,7 @@ const linkLabels: Record<string, string> = {
 };
 const links = Object.entries(pub.links).filter(([, url]) => !!url) as [string, string][];
 const statusKey = `pub.status.${pub.status}` as UiKeyOf<'pub.status.'>;
-const pending = pub.status === 'submitted' || pub.status === 'under-review' || pub.status === 'preprint';
+const pending = pub.status === 'submitted' || pub.status === 'under-review' || pub.status === 'withdrawn' || pub.status === 'preprint';
 ---
 
 <article class="pub-item group grid gap-3 sm:grid-cols-[7rem_1fr] sm:gap-5">

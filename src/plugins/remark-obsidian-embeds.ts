@@ -6,6 +6,7 @@ import { visit } from 'unist-util-visit';
  * Media handling shared by Obsidian-synced posts and posts written in the CMS:
  *
  * - `![caption](https://youtu.be/…)`, Vimeo and Bilibili links → responsive iframe
+ *   (YouTube Shorts get a vertical 9:16 frame)
  * - `![caption](/uploads/video/clip.mp4)` → `<video>`
  * - `![alt|400](img.png)` / `![alt|400x300](img.png)` → sized image (Obsidian syntax)
  * - bare relative image paths (`img.png`) → `./img.png` so Astro optimizes them
@@ -39,8 +40,8 @@ function figure(inner: string, alt?: string | null) {
   return `<figure class="embed">${inner}${caption}</figure>`;
 }
 
-function iframe(src: string, title: string) {
-  return `<div class="embed-frame"><iframe src="${esc(src)}" title="${esc(title)}" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`;
+function iframe(src: string, title: string, vertical = false) {
+  return `<div class="embed-frame${vertical ? ' embed-frame-vertical' : ''}"><iframe src="${esc(src)}" title="${esc(title)}" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`;
 }
 
 function parseSeconds(t: string | null): number | undefined {
@@ -69,9 +70,10 @@ export function embedHtml(node: Image): string | undefined {
       yt = u.searchParams.get('v') ?? u.pathname.match(/^\/(?:shorts|embed|live)\/([^/?]+)/)?.[1];
     }
     if (yt) {
+      const vertical = u.pathname.startsWith('/shorts/');
       const start = parseSeconds(u.searchParams.get('t') ?? u.searchParams.get('start'));
       const src = `https://www.youtube-nocookie.com/embed/${yt}${start ? `?start=${start}` : ''}`;
-      return figure(iframe(src, title), node.alt);
+      return figure(iframe(src, title, vertical), node.alt);
     }
     const vimeo = host === 'vimeo.com' ? u.pathname.match(/^\/(\d+)/)?.[1] : undefined;
     if (vimeo) return figure(iframe(`https://player.vimeo.com/video/${vimeo}`, title), node.alt);
