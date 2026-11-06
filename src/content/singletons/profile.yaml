@@ -9,19 +9,23 @@ en:
     **embodied AI**. I want robots and cameras to learn *how to see and how to move*
     from experience — connecting perception to decision-making so that they work
     reliably in the real world.
-  about: >-
-    My research started from a small everyday annoyance: empty cups and wrappers
-    left on my desk. I built RECOBOT, an NVIDIA JetBot that watches a falling
-    object and drives over to catch it, and quickly learned how brittle a
-    hand-tuned detect → filter → PID pipeline becomes under collisions, lighting
-    changes and fast motion. That question — can a robot learn to look and act on
-    its own? — led me to my master's research on active PTZ camera tracking with
-    deep reinforcement learning, and to a visiting summer at UC Berkeley's BAIR Lab.
+  about: |-
+    I am an M.S. student at the Miin Wu School of Computing, National Cheng Kung University (NCKU), advised by Prof. Yi-Yu Hsu, working on **embodied active tracking** with deep reinforcement learning.
+
+    Before that, I received my B.B.A. in Industrial and Information Management from NCKU. I taught myself computing by building systems until they broke: a multi-object basketball player tracker, RECOBOT (a trash-catching robot on an NVIDIA JetBot), and an RL gait controller for a DIY humanoid. In summer 2026, I was one of seven NCKU graduate students selected for a fully sponsored six-week program at UC Berkeley's BAIR Lab.
+
+    **Goal:** Machines that don't just detect their surroundings, but decide where to look and how to act, closing the loop from perception to decision to action in the real world.
+
+    **Research Interest:** Deep reinforcement learning, imitation and offline RL, open-vocabulary perception, and embodied active tracking.
+
+    **Research Question:** Can a single learned policy keep any nameable target in view, on any embodiment and in any environment, and recover after it loses sight of the target?
+
+    **Current Work:** My thesis, *Text-Conditioned Active Player Tracking with PTZ Cameras*, lets a user name the target in natural language and switch it mid-episode. The policy sees only a segmentation mask and is trained with offline RL. The proof of concept in UnrealZoo is done; next is deployment on the PTZ cameras in NCKU's Chung-Cheng Hall.
   resumeSummary: >-
     AI researcher and master's student at National Cheng Kung University (NCKU)
     specializing in Deep Reinforcement Learning, Vision-Language-Action (VLA) and
     Embodied AI. First-author work on active visual tracking via DRL submitted to
-    ACCV 2026, and visiting research experience at UC Berkeley (BAIR Lab).
+    ACCV 2026 (withdrawn for revision and resubmission), and visiting research experience at UC Berkeley (BAIR Lab).
     Proficient in PyTorch, Vision-Language Models (VLMs) and high-performance
     simulation workflows. Seeking research internships in foundation models and
     scalable robotic intelligence.
@@ -46,8 +50,19 @@ zh-TW:
   tagline: 具身智慧 · 深度強化學習 · 視覺-語言-動作模型
   affiliation: 國立成功大學 敏求智慧運算學院 智慧科技系統碩士學程
   bio: 我是林世璿，目前就讀成功大學敏求智慧運算學院碩士學程，研究**深度強化學習**、**視覺-語言-動作（VLA）模型**與**具身智慧**。我希望讓機器人與攝影機從經驗中學會「怎麼看、怎麼動」，把感知到決策真正串起來，並在真實世界中可靠運作。
-  about: 我的研究始於生活中的一個小觀察：座位上常出現喝完的飲料和垃圾。我在 NVIDIA JetBot 上做了一台能「看見」飛來的垃圾並移動去接住的機器人 RECOBOT，也第一次體會到「偵測＋濾波＋PID」這種靠人工調參的流程，遇到碰撞、光線干擾或目標快速移動時有多脆弱。「機器人能不能從經驗中自己學會怎麼看、怎麼動？」這個問題，帶我走進以深度強化學習實現主動式 PTZ 攝影機追蹤的碩士研究，也讓我有機會到加州大學柏克萊分校 BAIR 實驗室交流。
-  resumeSummary: 成功大學敏求智慧運算學院碩士生，專注於深度強化學習、視覺-語言-動作（VLA）模型與具身智慧。以第一作者身分將基於深度強化學習的主動式視覺追蹤研究投稿至 ACCV 2026，並曾赴加州大學柏克萊分校 BAIR 實驗室交流。熟悉 PyTorch、視覺語言模型（VLM）與高效能模擬訓練流程。
+  about: |-
+    我是成功大學敏求智慧運算學院碩士生，指導教授是徐禕佑老師，研究**具身主動式追蹤**，主要方法是深度強化學習。
+
+    大學就讀成大工業與資訊管理學系。我是靠一個一個動手做系統、看它們在哪裡失敗，自學進入資訊領域的，做過多目標籃球員追蹤系統、能接住空中垃圾的機器人 RECOBOT，以及用強化學習訓練步態的 DIY 人形機器人。2026 年夏天，我是成大選出的七位研究生之一，獲全額補助到加州大學柏克萊分校 BAIR 實驗室參加六週交流。
+
+    **目標：** 讓機器不只是看見環境，而是自己決定看哪裡、怎麼動，把感知、決策到行動串起來，在真實世界可靠運作。
+
+    **研究興趣：** 深度強化學習、模仿學習與離線強化學習、開放詞彙感知、具身主動式追蹤。
+
+    **研究問題：** 能不能用一個學出來的策略，在任何載具、任何環境中，把任何能用文字指定的目標保持在視野內，跟丟後還能自己找回來？
+
+    **目前研究：** 碩士論文「以文字指定目標的 PTZ 攝影機主動球員追蹤」：使用者用自然語言指定要追的人，中途也能換人。策略只看分割遮罩，用離線強化學習訓練。已在 UnrealZoo 完成概念驗證，下一步是部署到成大中正堂的 PTZ 攝影機上。
+  resumeSummary: 成功大學敏求智慧運算學院碩士生，專注於深度強化學習、視覺-語言-動作（VLA）模型與具身智慧。以第一作者身分將基於深度強化學習的主動式視覺追蹤研究投稿至 ACCV 2026（已撤回，修改後重投），並曾赴加州大學柏克萊分校 BAIR 實驗室交流。熟悉 PyTorch、視覺語言模型（VLM）與高效能模擬訓練流程。
   location: 台灣 台南
   motto: 沒有最好，只有更好
   interests:

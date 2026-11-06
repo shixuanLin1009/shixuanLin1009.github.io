@@ -7,6 +7,9 @@ org: Google Digital Talent Training Program
 tags: [Google Cloud, Generative AI]
 links: []
 order: 1
+certificate:
+  image: /uploads/showcase/certificates/google-cloud-genai.webp
+  file: /uploads/showcase/certificates/google-cloud-genai.pdf
 resume:
   include: true
   order: 1

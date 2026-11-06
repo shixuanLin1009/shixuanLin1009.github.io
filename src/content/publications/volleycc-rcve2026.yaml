@@ -1,17 +1,20 @@
 title: "VolleyCC: Volleyball Comprehension Captioning System Based on Vision-Language Model and Spatial-Temporal Integration"
 authors:
   - Shixuan Lin
-  - et al.
+  - Hung-Ming Huang
+  - Yi-Yu Hsu
 venue: International Conference on Robotics, Control and Vision Engineering
 venueShort: RCVE
 year: 2026
 status: submitted
 type: conference
+note: Co-first author (equal contribution)
 abstract: >-
   A hierarchical video comprehension framework that combines dedicated vision
   models (RT-DETR, X3D) with vision-language models to generate fine-grained,
   timestamped narratives from volleyball broadcasts, improving action
-  correctness by 27.8% and temporal consistency by 14.6% over baseline VLMs.
+  correctness by up to 27.6% and temporal consistency by up to 15.3% over
+  baseline VLMs.
 showcase: volleycc
 selected: true
 showOnResume: false

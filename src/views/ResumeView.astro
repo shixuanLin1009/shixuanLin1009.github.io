@@ -76,6 +76,12 @@ const resume = await getResumeData(locale, Astro.site);
                         </div>
                       )}
                       {item.detail && <p class="mt-1.5 text-sm text-muted">{item.detail}</p>}
+                      {item.certificate && (
+                        <a href={item.certificate} class="mt-1 inline-flex items-center gap-1 font-mono text-xs text-muted transition hover:text-accent" target="_blank" rel="noopener">
+                          <Icon name="pdf" size={12} />
+                          {t(locale, 'work.certificate')}
+                        </a>
+                      )}
                       {item.bullets.length > 0 && (
                         <ul class="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed marker:text-accent/60 [&_strong]:font-semibold">
                           {item.bullets.map((b) => (

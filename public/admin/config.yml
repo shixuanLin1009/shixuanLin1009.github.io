@@ -226,6 +226,16 @@ collections:
       - { name: featured, label: 精選（首頁大卡片）Featured, widget: boolean, default: false, i18n: duplicate, required: false }
       - { name: order, label: 排序 Order, widget: number, value_type: int, default: 10, i18n: duplicate, required: false }
       - { name: draft, label: 草稿（不公開）Draft, widget: boolean, default: false, i18n: duplicate, required: false }
+      - name: certificate
+        label: 證明文件 Certificate
+        widget: object
+        i18n: duplicate
+        required: false
+        collapsed: true
+        hint: 證書掃描圖會顯示在頁面上；PDF 會變成「開啟 PDF」按鈕。上傳前記得遮掉學號、生日等個資。
+        fields:
+          - { name: image, label: 證明圖片 Image, widget: image, i18n: duplicate }
+          - { name: file, label: 證明 PDF File, widget: file, i18n: duplicate, required: false }
       - name: resume
         label: 履歷 Resume
         widget: object
@@ -269,7 +279,7 @@ collections:
       - { name: venue, label: 會議／期刊全名 Venue, widget: string }
       - { name: venueShort, label: 簡稱 Short venue, widget: string, required: false, hint: 'e.g. ACCV' }
       - { name: year, label: 年份 Year, widget: number, value_type: int }
-      - { name: status, label: 狀態 Status, widget: select, options: [preprint, submitted, under-review, accepted, published], default: submitted }
+      - { name: status, label: 狀態 Status, widget: select, options: [preprint, submitted, under-review, withdrawn, accepted, published], default: submitted }
       - { name: type, label: 類型 Type, widget: select, options: [conference, journal, workshop, preprint, thesis], default: conference }
       - { name: note, label: 備註 Note, widget: string, required: false, hint: 'e.g. First author, Oral' }
       - { name: abstract, label: 摘要 Abstract, widget: text, required: false }
@@ -351,6 +361,16 @@ collections:
         required: false
         field: { name: bullet, label: Bullet, widget: text }
       - { name: tags, label: 標籤 Tags, widget: list, i18n: duplicate, required: false }
+      - name: certificate
+        label: 證明文件 Certificate
+        widget: object
+        i18n: duplicate
+        required: false
+        collapsed: true
+        hint: 證書掃描圖會顯示在頁面上；PDF 會變成「開啟 PDF」按鈕。上傳前記得遮掉學號、生日等個資。
+        fields:
+          - { name: image, label: 證明圖片 Image, widget: image, i18n: duplicate }
+          - { name: file, label: 證明 PDF File, widget: file, i18n: duplicate, required: false }
       - { name: showOnResume, label: 放進履歷 Show on resume, widget: boolean, default: true, i18n: duplicate, required: false }
       - { name: order, label: 排序 Order, widget: number, value_type: int, default: 10, i18n: duplicate }
 

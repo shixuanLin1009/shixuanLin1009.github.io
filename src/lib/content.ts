@@ -124,6 +124,7 @@ export type ResumeEntry = {
   dates?: string;
   url?: string;
   detail?: string;
+  certificate?: string;
   bullets: string[];
 };
 export type ResumeSection =
@@ -191,6 +192,7 @@ export async function getResumeData(locale: Locale, site: URL | undefined) {
               location: e.location,
               dates: formatRange(e.start, e.end, locale, { current: e.current }),
               url: e.url,
+              certificate: e.certificate?.file ?? e.certificate?.image,
               bullets: e.bullets,
             })),
         });

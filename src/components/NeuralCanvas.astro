@@ -73,9 +73,23 @@ const { class: className = '' } = Astro.props;
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // On wide screens the network sits on the right, behind/next to the avatar.
+      // On wide screens the network sits on the right, behind/next to the avatar,
+      // starting just past the right edge of the hero text so no node or edge runs under it.
       const wide = width >= 768;
-      const x0 = wide ? width * 0.42 : width * 0.06;
+      // Measure the rendered text lines, not the column box, which is wider than the text.
+      const avoid = host.querySelector('[data-neural-avoid]');
+      let textRight = 0;
+      if (avoid) {
+        const range = document.createRange();
+        const walker = document.createTreeWalker(avoid, NodeFilter.SHOW_TEXT);
+        for (let t = walker.nextNode(); t; t = walker.nextNode()) {
+          range.selectNodeContents(t);
+          for (const r of range.getClientRects()) textRight = Math.max(textRight, r.right - rect.left);
+        }
+        for (const el of avoid.querySelectorAll('a, button')) textRight = Math.max(textRight, el.getBoundingClientRect().right - rect.left);
+        textRight += 28;
+      }
+      const x0 = wide ? Math.max(width * 0.42, textRight) : width * 0.06;
       const x1 = wide ? width * 0.97 : width * 0.94;
       const y0 = height * 0.12;
       const y1 = height * 0.88;

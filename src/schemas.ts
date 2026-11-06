@@ -148,6 +148,12 @@ export const categorySchema = z.object({
   showOnHome: z.boolean().default(true),
 });
 
+// A scanned certificate: an image shown on the page and an optional PDF to open.
+const certificate = z.object({
+  image: z.string(),
+  file: z.string().optional(),
+});
+
 export const showcaseSchema = z.object({
   title: z.string(),
   summary: z.string(),
@@ -165,6 +171,7 @@ export const showcaseSchema = z.object({
   featured: z.boolean().default(false),
   order: z.number().default(0),
   draft: z.boolean().default(false),
+  certificate: certificate.optional(),
   resume: z
     .object({
       include: z.boolean().default(false),
@@ -201,6 +208,7 @@ export const experienceSchema = z.object({
   url: z.string().optional(),
   bullets: strings,
   tags: strings,
+  certificate: certificate.optional(),
   showOnResume: z.boolean().default(true),
   order: z.number().default(0),
 });
@@ -225,7 +233,7 @@ export const publicationSchema = z.preprocess(
     venue: z.string(),
     venueShort: z.string().optional(),
     year: z.coerce.number(),
-    status: z.enum(['preprint', 'submitted', 'under-review', 'accepted', 'published']).default('published'),
+    status: z.enum(['preprint', 'submitted', 'under-review', 'withdrawn', 'accepted', 'published']).default('published'),
     type: z.enum(['conference', 'journal', 'workshop', 'preprint', 'thesis']).default('conference'),
     note: z.string().optional(),
     abstract: z.string().optional(),
