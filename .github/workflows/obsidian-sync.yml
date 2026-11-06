@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: Check setup
         if: env.HAS_VAULT_TOKEN != 'true'
-        run: echo "::notice::VAULT_TOKEN secret is not set — skipping. See README → 雲端發佈."
+        run: echo "::notice::VAULT_TOKEN secret is not set — skipping. See docs/README.md → 雲端發佈."
 
       - uses: actions/checkout@v7
         if: env.HAS_VAULT_TOKEN == 'true'
