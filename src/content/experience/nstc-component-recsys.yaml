@@ -10,6 +10,7 @@ en:
     - Designed and implemented a vector/linear routing algorithm and Python data-processing scripts that suggest optimal components from multiple engineering parameters, improving selection efficiency for researchers and engineers.
     - Collaborated with a multidisciplinary team to integrate the system into the training platform, ensuring usability for educational and research purposes.
   tags: [Recommender Systems, Python]
+  showOnResume: false
   order: 3
 zh-TW:
   org: 國科會計畫 工程元件推薦系統
