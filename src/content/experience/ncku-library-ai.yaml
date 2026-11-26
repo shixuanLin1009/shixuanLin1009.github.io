@@ -1,0 +1,25 @@
+en:
+  org: National Cheng Kung University Library
+  role: Student Programmer (part-time)
+  type: work
+  location: Tainan, Taiwan
+  start: 2026-10-01
+  end: 2026-12-31
+  bullets:
+    - Built and launched the library's AI chat platform as the sole engineer. Readers and staff sign in with their campus account, and each role gets its own AI models and spending limits.
+    - Delivered in two months, from a working prototype that passed 13 automated checks to a campus launch handed over to the library with a 10-page operations manual.
+    - Made sign-in faster by shrinking the login redirect page from 1.7 MB to 1.7 KB (99.9% smaller), and connected both cloud AI models and a self-hosted open-source model.
+    - Added 11 one-click maintenance buttons and daily automatic backups, so library staff can run the system without using the command line.
+    - "Tech: Docker, Keycloak (SAML/OIDC single sign-on), Open WebUI, LiteLLM, Groq, Ollama, nginx, PostgreSQL, Redis, Python"
+  tags: [Docker, Keycloak, SAML, OIDC, LiteLLM, Open WebUI, nginx, Python]
+  order: 0
+zh-TW:
+  org: 國立成功大學圖書館
+  role: 程式設計師（工讀生）
+  location: 台灣 台南
+  bullets:
+    - 獨立負責打造並上線圖書館 AI 對話平台：讀者和館員用校園帳號登入，依身分使用不同的 AI 模型與用量額度。
+    - 兩個月內從原型（通過 13 項自動化驗證）做到校內上線，並附 10 頁操作手冊交付館方。
+    - 登入轉送頁從 1.7 MB 縮到 1.7 KB（減少 99.9%），加快登入速度；同時串接雲端 AI 模型和自架的開源模型。
+    - 建立 11 個一鍵維護按鈕與每日自動備份，館方不用下指令就能維運系統。
+    - 技術：Docker、Keycloak（SAML／OIDC 單一登入）、Open WebUI、LiteLLM、Groq、Ollama、nginx、PostgreSQL、Redis、Python
