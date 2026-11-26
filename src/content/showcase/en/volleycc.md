@@ -15,13 +15,13 @@ order: 2
 resume:
   include: true
   order: 2
-  title: "VolleyCC: Volleyball Comprehension Captioning system based on Vision Language Model and Spatial-Temporal Integration"
-  subtitle: Miin Wu School of Computing, NCKU
+  title: "VolleyCC: AI Volleyball Commentary System"
+  subtitle: Co-first-author paper (submitted to RCVE 2026)
   bullets:
     - "Tech Stack: PyTorch, Vision-Language Models (Qwen3-VL, InternVL3, LLaVA-Video, Gemma), RT-DETR, X3D, G-Eval, Python"
-    - Designed a hierarchical video comprehension framework integrating dedicated computer vision models (RT-DETR, X3D) with Vision-Language Models (VLMs) to generate fine-grained, timestamped match narratives from high-speed sports broadcast videos.
-    - "Built an end-to-end multi-stage pipeline: automated rally boundary segmentation via referee gesture detection, second-level player action recognition, and constraint-based prompt engineering to enforce temporal consistency and eliminate VLM hallucinations."
-    - Implemented a dual LLM-as-a-Judge evaluation framework (G-Eval & structured extraction) using Gemini, improving action correctness by up to 27.6% and temporal consistency by up to 15.3% over baseline VLMs.
+    - Built a system that watches volleyball broadcasts and writes timestamped play-by-play commentary, combining vision models (RT-DETR, X3D) with vision-language models.
+    - Split matches into rallies automatically by detecting referee gestures, recognized player actions second by second, and fed these facts to the language model to cut hallucinations.
+    - Set up automated evaluation with Gemini as a judge; action correctness improved by up to 27.6% and timing consistency by up to 15.3% over baseline models.
 ---
 
 ## Background

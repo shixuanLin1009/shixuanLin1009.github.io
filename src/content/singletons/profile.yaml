@@ -21,14 +21,16 @@ en:
     **Research Question:** Can a single learned policy keep any nameable target in view, on any embodiment and in any environment, and recover after it loses sight of the target?
 
     **Current Work:** My thesis, *Text-Conditioned Active Player Tracking with PTZ Cameras*, lets a user name the target in natural language and switch it mid-episode. The policy sees only a segmentation mask and is trained with offline RL. The proof of concept in UnrealZoo is done; next is deployment on the PTZ cameras in NCKU's Chung-Cheng Hall.
+  resumeHeadline: Computer Vision · AI/ML · Robotics — M.S. Student
   resumeSummary: >-
-    AI researcher and master's student at National Cheng Kung University (NCKU)
-    specializing in Deep Reinforcement Learning, Vision-Language-Action (VLA) and
-    Embodied AI. First-author work on active visual tracking via DRL submitted to
-    ACCV 2026 (withdrawn for revision and resubmission), and visiting research experience at UC Berkeley (BAIR Lab).
-    Proficient in PyTorch, Vision-Language Models (VLMs) and high-performance
-    simulation workflows. Seeking research internships in foundation models and
-    scalable robotic intelligence.
+    Master's student at National Cheng Kung University (NCKU, graduating 2027) who
+    builds computer vision, AI and robotics systems that work outside the lab.
+    Raised a camera-tracking success rate from 32% to 82% with deep reinforcement
+    learning, improved an AI sports-commentary system's action accuracy by up to
+    27.6%, and deployed a real-time recycling robot on an NVIDIA edge device.
+    Selected as one of seven NCKU graduate students for a fully funded visit to UC
+    Berkeley's BAIR Lab (2026). Seeking a summer 2027 internship or 2027 new-grad
+    role in computer vision, AI/ML, robotics or software engineering in Taiwan.
   avatar: /uploads/avatar.webp
   location: Tainan, Taiwan
   email: james920402@gmail.com
@@ -62,7 +64,8 @@ zh-TW:
     **研究問題：** 能不能用一個學出來的策略，在任何載具、任何環境中，把任何能用文字指定的目標保持在視野內，跟丟後還能自己找回來？
 
     **目前研究：** 碩士論文「以文字指定目標的 PTZ 攝影機主動球員追蹤」：使用者用自然語言指定要追的人，中途也能換人。策略只看分割遮罩，用離線強化學習訓練。已在 UnrealZoo 完成概念驗證，下一步是部署到成大中正堂的 PTZ 攝影機上。
-  resumeSummary: 成功大學敏求智慧運算學院碩士生，專注於深度強化學習、視覺-語言-動作（VLA）模型與具身智慧。以第一作者身分將基於深度強化學習的主動式視覺追蹤研究投稿至 ACCV 2026（已撤回，修改後重投），並曾赴加州大學柏克萊分校 BAIR 實驗室交流。熟悉 PyTorch、視覺語言模型（VLM）與高效能模擬訓練流程。
+  resumeHeadline: 電腦視覺 · AI/機器學習 · 機器人｜碩士生
+  resumeSummary: 成功大學智慧科技系統碩士生（預計 2027 年畢業），專長電腦視覺、AI 與機器人，能把研究做成實際可用的系統。用深度強化學習將攝影機自動追蹤成功率從 32% 提升到 82%，讓 AI 排球解說系統的動作判斷正確率最多提升 27.6%，並在 NVIDIA 邊緣運算裝置上完成即時運作的回收機器人。2026 年獲選為成大七位研究生之一，全額補助赴 UC Berkeley BAIR 實驗室訪問。目前尋找 2027 暑期實習與 2027 新鮮人職缺（電腦視覺、AI/機器學習、機器人、軟體工程，台灣）。
   location: 台灣 台南
   motto: 沒有最好，只有更好
   interests:

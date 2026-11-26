@@ -10,6 +10,7 @@ en:
     - Utilized YOLO for object detection and ByteTrack for multi-object tracking, optimizing performance in high-occlusion environments like basketball courts.
     - Collected and labeled 700 images from the Taiwan professional basketball league (P. LEAGUE+), achieving 84% mAP, 80% precision and 77% recall.
   tags: [YOLO, ByteTrack, Multi-Object Tracking]
+  showOnResume: false
   order: 2
 zh-TW:
   org: 成功大學 徐禕佑教授實驗室

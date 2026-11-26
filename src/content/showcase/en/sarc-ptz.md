@@ -15,13 +15,13 @@ order: 1
 resume:
   include: true
   order: 1
-  subtitle: ACCV 2026 Submission, withdrawn for revision (First Author)
+  subtitle: First-author paper (in revision for resubmission)
   bullets:
     - "Tech Stack: PyTorch, Deep Reinforcement Learning (PPO), Unreal Engine 4 (EagleSim), Computer Vision, Python"
-    - Formulated active Pan-Tilt-Zoom (PTZ) camera tracking as an end-to-end Deep Reinforcement Learning (DRL) control problem, directly mapping 4-frame stacked RGB observations to discrete MultiDiscrete camera control actions.
-    - Proposed Scale-Anchored Reward with Centering (SARC), combining a Gaussian scale term with target centering to resolve the systematic risk-averse "zoom-out" failure mode inherent in conventional product-style rewards.
-    - Introduced graded termination smoothing and a procedural Random Waypoint motion model to enhance training convergence and prevent overfitting to static trajectories across 6 parallel simulator instances.
-    - Boosted tracking Success Rate from 32% to 82% and Tracking Rate from 55.8% to 86.5% in EagleSim while maintaining target scale fidelity without an explicit detector at inference.
+    - Built a PTZ camera that learns to follow a moving target on its own, using a deep reinforcement learning agent (PPO) that turns video frames directly into pan, tilt and zoom commands.
+    - Designed a new reward (SARC) that stops the camera from simply zooming out to avoid losing the target, the main weakness of earlier reward designs.
+    - Raised tracking success rate from 32% to 82% (tracking rate 55.8% to 86.5%) in simulation, with no separate object detector needed at run time.
+    - Trained across 6 parallel simulators with randomized target motion so the policy does not overfit to fixed paths.
 ---
 
 ## Background

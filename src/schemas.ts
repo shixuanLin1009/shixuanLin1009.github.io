@@ -61,6 +61,7 @@ export const profileSchema = z.object({
   bio: z.string(),
   about: z.string().optional(),
   resumeSummary: z.string().optional(),
+  resumeHeadline: z.string().optional(),
   avatar: z.string().optional(),
   location: z.string().optional(),
   email: z.string().optional(),

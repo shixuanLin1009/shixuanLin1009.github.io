@@ -72,6 +72,7 @@ collections:
             i18n: true
             required: false
             hint: 履歷 PDF 與網頁履歷最上方的 Summary；留空則使用 Short bio。
+          - { name: resumeHeadline, label: 履歷頭銜 Resume headline, widget: string, i18n: true, required: false, hint: 只用在履歷名字下方；留空則使用 Headline。 }
           - { name: avatar, label: 大頭照 Avatar, widget: image, i18n: duplicate, required: false }
           - { name: location, label: 地點 Location, widget: string, i18n: true, required: false }
           - { name: email, label: Email, widget: string, i18n: duplicate, required: false }

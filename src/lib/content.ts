@@ -246,6 +246,6 @@ export async function getResumeData(locale: Locale, site: URL | undefined) {
 
   const altName = locale === 'zh-TW' ? (await getProfile('en')).name : undefined;
   const accent = paletteAccent[(await getSettings(locale)).palette];
-  return { locale, name: profile.name, altName, headline: profile.headline, accent, contact, sections };
+  return { locale, name: profile.name, altName, headline: profile.resumeHeadline ?? profile.headline, accent, contact, sections };
 }
 export type ResumeData = Awaited<ReturnType<typeof getResumeData>>;
